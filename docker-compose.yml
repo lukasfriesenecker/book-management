@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     container_name: book-management
     environment:
-      - PORT=${PORT}
+      - PORT=${API_PORT}
     ports:
       - '3000:3000'
     depends_on:
