@@ -26,7 +26,7 @@ import { BookService } from './book/book.service';
     UserModule,
     BookModule,
   ],
-  controllers: [AppController, BookController],
-  providers: [AppService, BookService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
