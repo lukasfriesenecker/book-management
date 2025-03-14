@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 import { Book } from './book/book.entity';
 import { ConfigModule } from '@nestjs/config';
+import { BookController } from './book/book.controller';
+import { BookService } from './book/book.service';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     BookModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, BookController],
+  providers: [AppService, BookService],
 })
 export class AppModule {}
