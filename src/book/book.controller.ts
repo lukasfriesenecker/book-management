@@ -1,24 +1,45 @@
-import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { BookService } from './book.service';
-import { Request } from 'express';
-import { Book } from './book.entity';
+import { CreateBookDto } from './dto/create-book.dto';
+import { UpdateBookDto } from './dto/update-book.dto';
 
 @Controller('api/book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @Post('add')
-  addBook(@Req() request: Request): Promise<Book[]> {
-    return this.bookService.addBook(request);
+  @Post()
+  async create(@Body() createBookDto: CreateBookDto) {
+    return this.bookService.create(createBookDto);
   }
 
-  @Put('update:isbn')
-  updateBook(@Req() request: Request): string {
-    return this.bookService.updateBook(request);
+  @Get()
+  async findAll() {
+    return this.bookService.findAll();
   }
 
-  @Delete('delete:isbn')
-  deleteBook(@Req() request: Request): string {
-    return this.bookService.deleteBook(request);
+  @Get(':isbn')
+  async findOne(@Param('isbn') isbn: string) {
+    return this.bookService.findOne(isbn);
+  }
+
+  @Put(':isbn')
+  async update(
+    @Param('isbn') isbn: string,
+    @Body() updateBookDto: UpdateBookDto,
+  ) {
+    return this.bookService.update(isbn, updateBookDto);
+  }
+
+  @Delete(':isbn')
+  async delete(@Param('isbn') isbn: string) {
+    return this.bookService.delete(isbn);
   }
 }

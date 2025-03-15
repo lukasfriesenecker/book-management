@@ -7,8 +7,8 @@ import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 import { Book } from './book/book.entity';
 import { ConfigModule } from '@nestjs/config';
-import { BookController } from './book/book.controller';
-import { BookService } from './book/book.service';
+import { BookUser } from './book-user/book-user.entity';
+import { BookUserModule } from './book-user/book-user.module';
 
 @Module({
   imports: [
@@ -20,11 +20,12 @@ import { BookService } from './book/book.service';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Book, User],
+      entities: [Book, User, BookUser],
       synchronize: true,
     }),
     UserModule,
     BookModule,
+    BookUserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

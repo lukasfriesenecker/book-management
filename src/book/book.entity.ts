@@ -1,5 +1,4 @@
-import { User } from 'src/user/user.entity';
-import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Book {
@@ -12,9 +11,6 @@ export class Book {
   @Column()
   author: string;
 
-  @Column({ default: false })
-  isRead: boolean;
-
-  @ManyToOne(() => User, (user) => user.books, { onDelete: 'CASCADE' })
-  user: User;
+  @Column({ type: 'int' })
+  year: number;
 }
