@@ -22,5 +22,5 @@ export class BookUser {
   user: User;
 
   @Column({ type: 'enum', enum: Status, default: Status.UNREAD })
-  isRead: Status;
+  status: Status;
 }
