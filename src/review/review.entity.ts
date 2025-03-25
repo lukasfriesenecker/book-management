@@ -1,14 +1,9 @@
 import { Book } from 'src/book/book.entity';
 import { User } from 'src/user/user.entity';
-import { Entity, Column, ManyToOne, PrimaryColumn, JoinColumn } from 'typeorm';
-
-export enum Status {
-  READ = 'READ',
-  UNREAD = 'UNREAD',
-}
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class BookUser {
+export class Review {
   @PrimaryColumn({ length: 13 })
   isbn: string;
 
@@ -23,6 +18,9 @@ export class BookUser {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ type: 'enum', enum: Status, default: Status.UNREAD })
-  status: Status;
+  @Column()
+  rating: number;
+
+  @Column({ nullable: true })
+  comment: string;
 }

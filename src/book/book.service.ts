@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Book } from './book.entity';
@@ -13,24 +13,34 @@ export class BookService {
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
-    const book = this.bookRepository.create(createBookDto);
-    return this.bookRepository.save(book);
-  }
+    const book = await this.bookRepository.findOne({
+      where: { isbn: createBookDto.isbn },
+    });
 
-  async findAll(): Promise<Book[]> {
-    return this.bookRepository.find();
-  }
-
-  async findOne(isbn: string): Promise<Book | null> {
-    return this.bookRepository.findOne({ where: { isbn } });
+    if (book) {
+      throw new HttpException(
+        `A book with ISBN ${createBookDto.isbn} already exists.`,
+        400,
+      );
+    }
+    return this.bookRepository.save(createBookDto);
   }
 
   async update(
     isbn: string,
     updateBookDto: UpdateBookDto,
   ): Promise<Book | null> {
-    await this.bookRepository.update(isbn, updateBookDto);
-    return this.findOne(isbn);
+    const book = await this.bookRepository.findOne({ where: { isbn } });
+
+    if (!book) {
+      throw new HttpException(`Book with ISBN ${isbn} not found.`, 404);
+    }
+
+    console.log(
+      'UPDATE: ',
+      await this.bookRepository.update(isbn, updateBookDto),
+    );
+    return this.bookRepository.findOne({ where: { isbn: isbn } });
   }
 
   async delete(isbn: string): Promise<void> {

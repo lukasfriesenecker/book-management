@@ -9,6 +9,9 @@ import { Book } from './book/book.entity';
 import { ConfigModule } from '@nestjs/config';
 import { BookUser } from './book-user/book-user.entity';
 import { BookUserModule } from './book-user/book-user.module';
+import { ReviewController } from './review/review.controller';
+import { ReviewModule } from './review/review.module';
+import { Review } from './review/review.entity';
 
 @Module({
   imports: [
@@ -20,12 +23,13 @@ import { BookUserModule } from './book-user/book-user.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Book, User, BookUser],
+      entities: [Book, User, BookUser, Review],
       synchronize: true,
     }),
     UserModule,
     BookModule,
     BookUserModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],
