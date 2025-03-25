@@ -18,7 +18,7 @@ export class BookUserService {
     return this.bookUserRepository.find({ where: { userId } });
   }
 
-  async toggleStatus(isbn: string, userId: number): Promise<BookUser> {
+  async toggleStatus(isbn: string, userId: number): Promise<BookUser | null> {
     const bookUser = await this.bookUserRepository.findOne({
       where: { isbn, userId },
     });
@@ -29,9 +29,16 @@ export class BookUserService {
       );
     }
 
-    bookUser.status =
+    const updatedStatus =
       bookUser.status === Status.UNREAD ? Status.READ : Status.UNREAD;
 
-    return this.bookUserRepository.save(bookUser);
+    await this.bookUserRepository.update(
+      { isbn: isbn, userId: userId },
+      { status: updatedStatus },
+    );
+
+    return this.bookUserRepository.findOne({
+      where: { isbn: isbn, userId: userId },
+    });
   }
 }
