@@ -27,6 +27,10 @@ export class BookService {
     return this.bookRepository.save(createBookDto);
   }
 
+  async findAll(): Promise<Book[]> {
+    return this.bookRepository.find();
+  }
+
   async update(
     isbn: string,
     updateBookDto: UpdateBookDto,

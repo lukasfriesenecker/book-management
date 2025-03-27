@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './review.entity';
@@ -44,5 +44,20 @@ export class ReviewService {
     return this.reviewRepository.findOne({
       where: { isbn: isbn, userId: userId },
     });
+  }
+
+  async delete(isbn: string, userId: number): Promise<void> {
+    const review = await this.reviewRepository.findOne({
+      where: { isbn: isbn, userId: userId },
+    });
+
+    if (!review) {
+      throw new HttpException(
+        `Review with ISBN ${isbn} not found for user with ID ${userId}.`,
+        404,
+      );
+    }
+
+    await this.reviewRepository.delete({ isbn: isbn, userId: userId });
   }
 }

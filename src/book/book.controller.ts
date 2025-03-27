@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   Param,
   Post,
@@ -18,6 +19,11 @@ export class BookController {
   @Post()
   async create(@Body() createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);
+  }
+
+  @Get()
+  async findAll() {
+    return this.bookService.findAll();
   }
 
   @Put(':isbn')
