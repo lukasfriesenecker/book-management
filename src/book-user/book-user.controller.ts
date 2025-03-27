@@ -1,9 +1,22 @@
-import { Controller, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { BookUserService } from './book-user.service';
 
 @Controller('api/book-user')
 export class BookUserController {
   constructor(private readonly bookUserService: BookUserService) {}
+
+  @Post(':isbn/:userId')
+  async create(@Param('isbn') isbn: string, @Param('userId') userId: number) {
+    return this.bookUserService.create({ isbn: isbn, userId: userId });
+  }
 
   @Get()
   async findAll() {
@@ -11,7 +24,7 @@ export class BookUserController {
   }
 
   @Get(':userId')
-  async findOne(@Param('userId') userId: number) {
+  async findAllPerUser(@Param('userId') userId: number) {
     return this.bookUserService.findAllPerUser(userId);
   }
 
@@ -21,5 +34,11 @@ export class BookUserController {
     @Param('userId') userId: number,
   ) {
     return this.bookUserService.toggleStatus(isbn, userId);
+  }
+
+  @Delete(':isbn/:userId')
+  @HttpCode(204)
+  async delete(@Param('isbn') isbn: string, @Param('userId') userId: number) {
+    return this.bookUserService.delete(isbn, userId);
   }
 }

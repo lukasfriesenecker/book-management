@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BookUser, Status } from './book-user.entity';
+import { CreateBookUserDto } from './dto/create-book-user.dto';
 
 @Injectable()
 export class BookUserService {
@@ -9,6 +10,10 @@ export class BookUserService {
     @InjectRepository(BookUser)
     private bookUserRepository: Repository<BookUser>,
   ) {}
+
+  async create(createBookUserDto: CreateBookUserDto): Promise<BookUser> {
+    return this.bookUserRepository.save(createBookUserDto);
+  }
 
   async findAll(): Promise<BookUser[]> {
     return this.bookUserRepository.find();
@@ -40,5 +45,20 @@ export class BookUserService {
     return this.bookUserRepository.findOne({
       where: { isbn: isbn, userId: userId },
     });
+  }
+
+  async delete(isbn: string, userId: number): Promise<void> {
+    const bookUser = await this.bookUserRepository.findOne({
+      where: { isbn, userId },
+    });
+
+    if (!bookUser) {
+      throw new HttpException(
+        `Book with ISBN ${isbn} not found for user with ID ${userId}.`,
+        404,
+      );
+    }
+
+    await this.bookUserRepository.delete({ isbn, userId });
   }
 }

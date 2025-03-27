@@ -20,9 +20,10 @@ export class BookService {
     if (book) {
       throw new HttpException(
         `A book with ISBN ${createBookDto.isbn} already exists.`,
-        400,
+        409,
       );
     }
+
     return this.bookRepository.save(createBookDto);
   }
 
@@ -30,20 +31,24 @@ export class BookService {
     isbn: string,
     updateBookDto: UpdateBookDto,
   ): Promise<Book | null> {
-    const book = await this.bookRepository.findOne({ where: { isbn } });
+    const book = await this.bookRepository.findOne({ where: { isbn: isbn } });
 
     if (!book) {
       throw new HttpException(`Book with ISBN ${isbn} not found.`, 404);
     }
 
-    console.log(
-      'UPDATE: ',
-      await this.bookRepository.update(isbn, updateBookDto),
-    );
+    await this.bookRepository.update(isbn, updateBookDto);
+
     return this.bookRepository.findOne({ where: { isbn: isbn } });
   }
 
   async delete(isbn: string): Promise<void> {
+    const book = await this.bookRepository.findOne({ where: { isbn: isbn } });
+
+    if (!book) {
+      throw new HttpException(`Book with ISBN ${isbn} not found.`, 404);
+    }
+
     await this.bookRepository.delete(isbn);
   }
 }
