@@ -12,6 +12,8 @@ import { BookUserModule } from './book-user/book-user.module';
 import { ReviewController } from './review/review.controller';
 import { ReviewModule } from './review/review.module';
 import { Review } from './review/review.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -32,6 +34,12 @@ import { Review } from './review/review.entity';
     ReviewModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

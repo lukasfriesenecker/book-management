@@ -29,8 +29,9 @@ export class BookUserService {
     });
 
     if (!bookUser) {
-      throw new Error(
+      throw new HttpException(
         `Book with ISBN ${isbn} not found for user with ID ${userId}.`,
+        404,
       );
     }
 

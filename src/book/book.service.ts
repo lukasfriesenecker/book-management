@@ -13,6 +13,13 @@ export class BookService {
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
+    if (createBookDto.isbn.length !== 13) {
+      throw new HttpException(
+        `ISBN must be exactly 13 characters long.`,
+        400,
+      );
+    }
+
     const book = await this.bookRepository.findOne({
       where: { isbn: createBookDto.isbn },
     });

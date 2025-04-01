@@ -11,12 +11,15 @@ import {
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { RequiredRole } from 'src/decorators/roles.decorator';
+import { Role } from 'src/user/user.entity';
 
 @Controller('api/book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
+  @RequiredRole(Role.ADMIN)
   async create(@Body() createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);
   }
