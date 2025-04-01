@@ -15,10 +15,6 @@ export class BookUserService {
     return this.bookUserRepository.save(createBookUserDto);
   }
 
-  async findAll(): Promise<BookUser[]> {
-    return this.bookUserRepository.find();
-  }
-
   async findAllPerUser(userId: number): Promise<BookUser[]> {
     return this.bookUserRepository.find({ where: { userId } });
   }

@@ -9,18 +9,13 @@ import {
 } from '@nestjs/common';
 import { BookUserService } from './book-user.service';
 
-@Controller('api/book-user')
+@Controller('books-users')
 export class BookUserController {
   constructor(private readonly bookUserService: BookUserService) {}
 
   @Post(':isbn/:userId')
   async create(@Param('isbn') isbn: string, @Param('userId') userId: number) {
     return this.bookUserService.create({ isbn: isbn, userId: userId });
-  }
-
-  @Get()
-  async findAll() {
-    return this.bookUserService.findAll();
   }
 
   @Get(':userId')

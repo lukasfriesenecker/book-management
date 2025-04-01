@@ -14,7 +14,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { RequiredRole } from 'src/decorators/roles.decorator';
 import { Role } from 'src/user/user.entity';
 
-@Controller('api/book')
+@Controller('books')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
