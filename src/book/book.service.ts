@@ -14,10 +14,7 @@ export class BookService {
 
   async create(createBookDto: CreateBookDto): Promise<Book> {
     if (createBookDto.isbn.length !== 13) {
-      throw new HttpException(
-        `ISBN must be exactly 13 characters long.`,
-        400,
-      );
+      throw new HttpException(`ISBN must be exactly 13 characters long`, 400);
     }
 
     const book = await this.bookRepository.findOne({
@@ -25,10 +22,7 @@ export class BookService {
     });
 
     if (book) {
-      throw new HttpException(
-        `A book with ISBN ${createBookDto.isbn} already exists.`,
-        409,
-      );
+      throw new HttpException(`A book with this ISBN already exists`, 409);
     }
 
     return this.bookRepository.save(createBookDto);
@@ -45,7 +39,7 @@ export class BookService {
     const book = await this.bookRepository.findOne({ where: { isbn: isbn } });
 
     if (!book) {
-      throw new HttpException(`Book with ISBN ${isbn} not found.`, 404);
+      throw new HttpException(`Book not found`, 404);
     }
 
     await this.bookRepository.update(isbn, updateBookDto);
@@ -57,7 +51,7 @@ export class BookService {
     const book = await this.bookRepository.findOne({ where: { isbn: isbn } });
 
     if (!book) {
-      throw new HttpException(`Book with ISBN ${isbn} not found.`, 404);
+      throw new HttpException(`Book not found`, 404);
     }
 
     await this.bookRepository.delete(isbn);
