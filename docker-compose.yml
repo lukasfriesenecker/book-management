@@ -18,9 +18,17 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      - PORT=${API_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - API_BASE_URL=${API_BASE_URL}
+      - API_SWAGGER_URL=${API_SWAGGER_URL}
+      - API_PORT=${API_PORT}
     volumes:
       - ./backend/src:/app/src
+      - ./.env:/app/.env
     ports:
       - "${API_PORT}:3000"
     depends_on:
