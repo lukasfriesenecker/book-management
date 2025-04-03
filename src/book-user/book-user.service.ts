@@ -2,17 +2,37 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BookUser, Status } from './book-user.entity';
-import { CreateBookUserDto } from './dto/create-book-user.dto';
+import { UserService } from 'src/user/user.service';
+import { BookService } from 'src/book/book.service';
 
 @Injectable()
 export class BookUserService {
   constructor(
     @InjectRepository(BookUser)
     private bookUserRepository: Repository<BookUser>,
+    private bookService: BookService,
+    private userService: UserService,
   ) {}
 
-  async create(createBookUserDto: CreateBookUserDto): Promise<BookUser> {
-    return this.bookUserRepository.save(createBookUserDto);
+  async create(isbn: string, userId: number): Promise<BookUser> {
+    await this.bookService.exists(isbn);
+    await this.userService.exists(userId);
+
+    const bookUser = await this.bookUserRepository.findOne({
+      where: { isbn: isbn, userId: userId },
+    });
+
+    if (bookUser) {
+      throw new HttpException(
+        `BookUser with ISBN ${isbn} and USERID ${userId} already exists`,
+        409,
+      );
+    }
+
+    return this.bookUserRepository.save({
+      isbn: isbn,
+      userId: userId,
+    });
   }
 
   async findAllPerUser(userId: number): Promise<BookUser[]> {
@@ -26,7 +46,7 @@ export class BookUserService {
 
     if (!bookUser) {
       throw new HttpException(
-        `Book with ISBN ${isbn} not found for user with ID ${userId}.`,
+        `BookUser with ISBN ${isbn} and USERID ${userId} not found`,
         404,
       );
     }
@@ -51,7 +71,7 @@ export class BookUserService {
 
     if (!bookUser) {
       throw new HttpException(
-        `Book with ISBN ${isbn} not found for user with ID ${userId}.`,
+        `BookUser with ISBN ${isbn} and USERID ${userId} not found`,
         404,
       );
     }

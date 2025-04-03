@@ -54,4 +54,14 @@ export class UserService {
 
     await this.userRepository.delete(id);
   }
+
+  async exists(id: number): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!user) {
+      throw new HttpException(`User with ID ${id} not found`, 404);
+    }
+  }
 }
