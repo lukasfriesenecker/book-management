@@ -10,18 +10,28 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
-      - '${DB_PORT}:5432'
+      - "${DB_PORT}:5432"
 
-  app:
+  backend:
     container_name: backend
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     environment:
       - PORT=${API_PORT}
     volumes:
-      - ./src:/app/src
+      - ./backend/src:/app/src
     ports:
-      - '${API_PORT}:3000'
+      - "${API_PORT}:3000"
+    depends_on:
+      - db
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
     depends_on:
       - db
