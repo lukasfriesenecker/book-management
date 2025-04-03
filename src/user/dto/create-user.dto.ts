@@ -11,6 +11,6 @@ export class CreateUserDto {
   @ApiProperty({ example: 'password' })
   password: string;
 
-  @ApiProperty({ example: Role.ADMIN, required: false })
+  @ApiProperty({ example: Role.USER, required: false })
   role?: Role;
 }

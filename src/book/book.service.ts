@@ -35,6 +35,12 @@ export class BookService {
     return this.bookRepository.find();
   }
 
+  async findOne(isbn: string): Promise<Book | null> {
+    await this.exists(isbn);
+
+    return await this.bookRepository.findOne({ where: { isbn } });
+  }
+
   async update(
     isbn: string,
     updateBookDto: UpdateBookDto,

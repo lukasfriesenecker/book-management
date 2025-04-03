@@ -13,7 +13,13 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { RequiredRole } from 'src/decorators/roles.decorator';
 import { Role } from 'src/user/user.entity';
-import { ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('books')
 export class BookController {
@@ -21,6 +27,7 @@ export class BookController {
 
   @Post()
   @RequiredRole(Role.ADMIN)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 400,
     description: 'ISBN must be exactly 13 characters long',
@@ -32,6 +39,10 @@ export class BookController {
   @ApiResponse({
     status: 201,
     description: 'Created',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
   })
   async create(@Body() createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);
@@ -46,8 +57,18 @@ export class BookController {
     return this.bookService.findAll();
   }
 
+  @Get(':isbn')
+  @ApiResponse({
+    status: 200,
+    description: 'Data retrieved successfully',
+  })
+  async findOne(@Param('isbn') isbn: string) {
+    return this.bookService.findOne(isbn);
+  }
+
   @Put(':isbn')
   @RequiredRole(Role.ADMIN)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 404,
     description: 'Book not found',
@@ -55,6 +76,10 @@ export class BookController {
   @ApiResponse({
     status: 200,
     description: 'Updated',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
   })
   async update(
     @Param('isbn') isbn: string,
@@ -66,6 +91,7 @@ export class BookController {
   @Delete(':isbn')
   @RequiredRole(Role.ADMIN)
   @HttpCode(204)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 404,
     description: 'Book not found',
@@ -73,6 +99,10 @@ export class BookController {
   @ApiResponse({
     status: 204,
     description: 'Deleted',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
   })
   async delete(@Param('isbn') isbn: string) {
     return this.bookService.delete(isbn);

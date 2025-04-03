@@ -9,7 +9,6 @@ import { Book } from './book/book.entity';
 import { ConfigModule } from '@nestjs/config';
 import { BookUser } from './book-user/book-user.entity';
 import { BookUserModule } from './book-user/book-user.module';
-import { ReviewController } from './review/review.controller';
 import { ReviewModule } from './review/review.module';
 import { Review } from './review/review.entity';
 import { APP_GUARD } from '@nestjs/core';

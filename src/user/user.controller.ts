@@ -6,10 +6,12 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiResponse } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UserController {
@@ -45,6 +47,19 @@ export class UserController {
   })
   async findOne(@Param('id') id: number) {
     return this.userService.findOne(id);
+  }
+
+  @Put(':id')
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Updated',
+  })
+  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
