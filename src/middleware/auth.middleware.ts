@@ -7,8 +7,8 @@ export class AuthMiddleware implements NestMiddleware {
   use(req: any, res: Response, next: NextFunction) {
     req.user = {
       id: 1,
-      username: 'lukasfriesenecker',
-      password: 'geheim',
+      username: 'maxmustermann',
+      password: 'password',
       role: Role.ADMIN,
     };
     next();

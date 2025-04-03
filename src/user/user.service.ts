@@ -13,17 +13,16 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({
-      where: { username: createUserDto.username },
+      where: [{ id: createUserDto.id }, { username: createUserDto.username }],
     });
 
     if (user) {
       throw new HttpException(
-        `User with username ${createUserDto.username} already exists`,
+        `User with ${user.id === createUserDto.id ? 'ID' : 'USERNAME'} ${user.id === createUserDto.id ? createUserDto.id : createUserDto.username} already exists`,
         409,
       );
     }
 
-    // id 36
     return this.userRepository.save(createUserDto);
   }
 
@@ -32,25 +31,15 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User | null> {
-    const user = await this.userRepository.findOne({
+    await this.exists(id);
+
+    return await this.userRepository.findOne({
       where: { id: id },
     });
-
-    if (!user) {
-      throw new HttpException(`User with userId ${id} not found`, 404);
-    }
-
-    return user;
   }
 
   async delete(id: number): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: id },
-    });
-
-    if (!user) {
-      throw new HttpException(`User with userId ${id} not found`, 404);
-    }
+    await this.exists(id);
 
     await this.userRepository.delete(id);
   }

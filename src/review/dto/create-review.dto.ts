@@ -10,6 +10,6 @@ export class CreateReviewDto {
   @ApiProperty({ example: 4 })
   rating: number;
 
-  @ApiProperty({ example: 'Great book!' })
+  @ApiProperty({ example: 'Great book!', required: false })
   comment?: string;
 }

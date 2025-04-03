@@ -27,7 +27,7 @@ export class BookController {
   })
   @ApiResponse({
     status: 409,
-    description: 'A book with this ISBN already exists',
+    description: 'Book already exists',
   })
   @ApiResponse({
     status: 201,
