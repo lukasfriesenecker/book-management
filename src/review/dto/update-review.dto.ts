@@ -1,6 +1,9 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class UpdateReviewDto {
-  isbn: string;
-  userId: number;
+  @ApiProperty({ example: 5, required: false })
   rating?: number;
+
+  @ApiProperty({ example: 'Loved it!', required: false })
   comment?: string;
 }

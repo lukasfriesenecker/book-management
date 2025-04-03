@@ -76,6 +76,6 @@ export class BookUserService {
       );
     }
 
-    await this.bookUserRepository.delete({ isbn, userId });
+    await this.bookUserRepository.delete({ isbn: isbn, userId: userId });
   }
 }

@@ -4,20 +4,37 @@ import { Repository } from 'typeorm';
 import { Review } from './review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { BookService } from 'src/book/book.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ReviewService {
   constructor(
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
+    private bookService: BookService,
+    private userService: UserService,
   ) {}
 
   async create(createReviewDto: CreateReviewDto): Promise<Review> {
-    const book = this.reviewRepository.create(createReviewDto);
-    return this.reviewRepository.save(book);
+    await this.bookService.exists(createReviewDto.isbn);
+    await this.userService.exists(createReviewDto.userId);
+
+    const review = await this.reviewRepository.findOne({
+      where: { isbn: createReviewDto.isbn, userId: createReviewDto.userId },
+    });
+
+    if (review) {
+      throw new HttpException(
+        `Review with ISBN ${createReviewDto.isbn} and USERID ${createReviewDto.userId} already exists.`,
+        409,
+      );
+    }
+
+    return this.reviewRepository.save(createReviewDto);
   }
 
-  async find(isbn: string): Promise<Review[] | null> {
+  async findAllPerBook(isbn: string): Promise<Review[] | null> {
     return this.reviewRepository.find({ where: { isbn: isbn } });
   }
 
@@ -31,8 +48,9 @@ export class ReviewService {
     });
 
     if (!review) {
-      throw new Error(
-        `Review with ISBN ${isbn} not found for user with ID ${userId}.`,
+      throw new HttpException(
+        `Review with ISBN ${isbn} and USERID ${userId} not found`,
+        409,
       );
     }
 
@@ -53,7 +71,7 @@ export class ReviewService {
 
     if (!review) {
       throw new HttpException(
-        `Review with ISBN ${isbn} not found for user with ID ${userId}.`,
+        `Review with ISBN ${isbn} and USERID ${userId} not found`,
         404,
       );
     }
