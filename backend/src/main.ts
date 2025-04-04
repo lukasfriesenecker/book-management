@@ -10,7 +10,7 @@ async function bootstrap() {
   app.use(new AuthMiddleware().use);
   app.useGlobalGuards(new RolesGuard(new Reflector()));
 
-  app.setGlobalPrefix(process.env.API_BASE_URL ?? 'api');
+  app.setGlobalPrefix(process.env.BACKEND_BASE_URL ?? 'api');
 
   const config = new DocumentBuilder()
     .setTitle('Book Management')
@@ -18,11 +18,11 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(
-    process.env.API_SWAGGER_URL ?? 'api',
+    process.env.BACKEND_SWAGGER_URL ?? 'api',
     app,
     documentFactory,
   );
 
-  await app.listen(process.env.API_PORT ?? 3000);
+  await app.listen(process.env.BACKEND_PORT ?? 3000);
 }
 bootstrap();
