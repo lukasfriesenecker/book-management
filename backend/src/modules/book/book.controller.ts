@@ -11,8 +11,8 @@ import {
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { RequiredRole } from 'src/decorators/roles.decorator';
-import { Role } from 'src/user/user.entity';
+import { RequiredRole } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/modules/user/user.entity';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('books')
@@ -68,12 +68,12 @@ export class BookController {
     description: 'Book not found',
   })
   @ApiResponse({
-    status: 200,
-    description: 'Updated',
-  })
-  @ApiResponse({
     status: 403,
     description: 'Forbidden',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Updated',
   })
   async update(
     @Param('isbn') isbn: string,

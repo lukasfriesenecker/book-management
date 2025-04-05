@@ -1,8 +1,8 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RolesGuard } from './guards/roles.guard';
-import { AuthMiddleware } from './middleware/auth.middleware';
+import { RolesGuard } from './common/guards/roles.guard';
+import { AuthMiddleware } from './common/middleware/auth.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -2,8 +2,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BookUser, Status } from './book-user.entity';
-import { UserService } from 'src/user/user.service';
-import { BookService } from 'src/book/book.service';
+import { UserService } from 'src/modules/user/user.service';
+import { BookService } from 'src/modules/book/book.service';
 
 @Injectable()
 export class BookUserService {

@@ -2,17 +2,17 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './user/user.entity';
-import { UserModule } from './user/user.module';
-import { BookModule } from './book/book.module';
-import { Book } from './book/book.entity';
+import { User } from './modules/user/user.entity';
+import { UserModule } from './modules/user/user.module';
+import { BookModule } from './modules/book/book.module';
+import { Book } from './modules/book/book.entity';
 import { ConfigModule } from '@nestjs/config';
-import { BookUser } from './book-user/book-user.entity';
-import { BookUserModule } from './book-user/book-user.module';
-import { ReviewModule } from './review/review.module';
-import { Review } from './review/review.entity';
+import { BookUser } from './modules/book-user/book-user.entity';
+import { BookUserModule } from './modules/book-user/book-user.module';
+import { ReviewModule } from './modules/review/review.module';
+import { Review } from './modules/review/review.entity';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './guards/roles.guard';
+import { RolesGuard } from './common/guards/roles.guard';
 
 @Module({
   imports: [

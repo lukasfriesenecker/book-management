@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { Review } from './review.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
-import { BookService } from 'src/book/book.service';
-import { UserService } from 'src/user/user.service';
+import { BookService } from 'src/modules/book/book.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class ReviewService {
