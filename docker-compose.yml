@@ -39,11 +39,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - PORT=3001
       - WATCHPACK_POLLING=true
     volumes:
       - ./frontend/src:/frontend/src
-    ports:
-      - "${FRONTEND_PORT}:3001"
     depends_on:
       - backend
