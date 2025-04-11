@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 interface NavbarProps {
   userId: number
@@ -17,6 +18,12 @@ interface NavbarProps {
 }
 
 export function Navbar({ userId, username = "user" }: NavbarProps) {
+    const navigate = useNavigate()
+
+    const handleLogout = () => {
+        navigate("/login");
+        console.log("User logged out")
+    }
 
   return (
     <div className="border-b">
@@ -58,7 +65,7 @@ export function Navbar({ userId, username = "user" }: NavbarProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
               <span>Logout</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
