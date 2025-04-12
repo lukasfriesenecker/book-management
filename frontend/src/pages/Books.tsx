@@ -16,6 +16,7 @@ import { Edit, Plus, Search, Trash2, BookMarked } from "lucide-react"
 import { toast } from "sonner"
 import { Navbar } from "@/components/Navbar";
 import api from "../api"
+import BookReviewDialog from "@/components/Bookreview"
 
 interface Book {
     isbn: string
@@ -416,29 +417,29 @@ function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: Bo
                             <p className="text-gray-600 mb-2">{book.author}</p>
 
                             <div className="text-sm text-gray-500 mb-4">
-  <p className="mb-1">Published: {book.year}</p>
-  <div className="flex justify-between items-center">
-    <p className="m-0">ISBN: {book.isbn}</p>
-    <div className="flex gap-1">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onEdit(book)}
-        className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onDelete(book.isbn)}
-        className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
-  </div>
-</div>
+                                <p className="mb-1">Published: {book.year}</p>
+                                <div className="flex justify-between items-center">
+                                    <p className="m-0">ISBN: {book.isbn}</p>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onEdit(book)}
+                                            className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onDelete(book.isbn)}
+                                            className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
 
                             <Button
                                 className={`w-full mt-3 ${inCollection ? "bg-indigo-600 hover:bg-indigo-700" : "bg-blue-600 hover:bg-blue-700"
@@ -449,6 +450,7 @@ function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: Bo
                                 <BookMarked className="h-4 w-4 mr-2" />
                                 {inCollection ? "Uncollect" : "Collect"}
                             </Button>
+                            <BookReviewDialog book={book} userId={1} />
                         </CardContent>
                     </Card>
                 )
