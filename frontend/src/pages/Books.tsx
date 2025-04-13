@@ -55,7 +55,18 @@ export default function AllBooks() {
     ])
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [bookUsers, setBookUsers] = useState<BookUser[]>([])
+    const [bookUsers, setBookUsers] = useState<BookUser[]>([
+        {
+            bookIsbn: "9780553106633",
+            userId: 1,
+            status: "read"
+        },
+        {
+            bookIsbn: "9780553103540",
+            userId: 1,
+            status: "unread"
+        },
+    ])
     const [searchQuery, setSearchQuery] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
@@ -121,34 +132,44 @@ export default function AllBooks() {
     const toggleCollection = async (isbn: string) => {
         setError("")
         setSuccess("")
-
+    
+        if (!userId) {
+            toast.error("User ID missing.")
+            return
+        }
+    
         const book = books.find((b) => b.isbn === isbn)
-        if (!book) return
-
+        if (!book) {
+            console.warn(`Book with ISBN ${isbn} not found`)
+            toast.error("Book not found.")
+            return
+        }
+    
         const inCollection = isInCollection(isbn)
-
+    
         try {
             if (inCollection) {
-                // Remove from collection
                 await api.delete(`/books-users/${isbn}/${userId}`)
                 toast.success("Book removed from your collection!")
             } else {
-                // Add to collection
                 await api.post(`/books-users/${isbn}/${userId}`)
+                console.log(`Calling: /books-users/${isbn}/${userId}`)
+                console.log("Book added to collection:", isbn)
                 toast.success("Book added to your collection!")
             }
-
-            // Refresh the user's collection
+    
             await fetchBookUsers()
         } catch (error) {
             console.error("Error updating collection:", error)
             toast.error(
                 inCollection
                     ? "Failed to remove book from collection. Please try again."
-                    : "Failed to add book to collection. Please try again.",
+                    : "Failed to add book to collection. Please try again."
             )
+            setError("Something went wrong. Please try again later.")
         }
     }
+    
 
     // Delete book
     const deleteBook = async (isbn: string) => {
