@@ -27,46 +27,16 @@ interface Book {
 
 interface BookUser {
     userId: number
-    bookIsbn: string
+    isbn: string
     status: "read" | "unread"
 }
 
 export default function AllBooks() {
     const userId = 1
-    const [books, setBooks] = useState<Book[]>([
-        {
-            isbn: "9780553593716",
-            title: "Cy Ganderton",
-            author: "Test1",
-            year: "2004"
-        },
-        {
-            isbn: "9780553103540",
-            title: "Hart Hagerty",
-            author: "Test1",
-            year: "2004"
-        },
-        {
-            isbn: "9780553106633",
-            title: "Brice Swyre",
-            author: "Test1",
-            year: "2004"
-        },
-    ])
+    const [books, setBooks] = useState<Book[]>([])
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
-    const [bookUsers, setBookUsers] = useState<BookUser[]>([
-        {
-            bookIsbn: "9780553106633",
-            userId: 1,
-            status: "read"
-        },
-        {
-            bookIsbn: "9780553103540",
-            userId: 1,
-            status: "unread"
-        },
-    ])
+    const [bookUsers, setBookUsers] = useState<BookUser[]>([])
     const [searchQuery, setSearchQuery] = useState("")
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
@@ -114,7 +84,7 @@ export default function AllBooks() {
 
     // Check if a book is in the user's collection
     const isInCollection = (isbn: string): boolean => {
-        return bookUsers.some((bu) => bu.bookIsbn === isbn)
+        return bookUsers.some((bu) => bu.isbn === isbn)
     }
 
     // Filter books based on search query
@@ -417,7 +387,7 @@ interface BookGridProps {
 function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: BookGridProps) {
     // Helper function to check if a book is in the collection
     const isInCollection = (isbn: string): boolean => {
-        return bookUsers.some((bu) => bu.bookIsbn === isbn)
+        return bookUsers.some((bu) => bu.isbn === isbn)
     }
 
     return (

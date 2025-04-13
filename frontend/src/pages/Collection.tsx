@@ -23,39 +23,9 @@ interface BookUser {
 
 export default function MyCollection() {
   const userId = 1
-  const [books, setBooks] = useState<Book[]>([
-    {
-      isbn: "9780553593716",
-      title: "Cy Ganderton",
-      author: "Test1",
-      year: "2004"
-    },
-    {
-      isbn: "9780553103540",
-      title: "Hart Hagerty",
-      author: "Test1",
-      year: "2004"
-    },
-    {
-      isbn: "9780553106633",
-      title: "Brice Swyre",
-      author: "Test1",
-      year: "2004"
-    },
-  ])
+  const [books, setBooks] = useState<Book[]>([])
   const [error, setError] = useState("")
-  const [bookUsers, setBookUsers] = useState<BookUser[]>([
-    {
-      isbn: "9780553106633",
-      userId: 1,
-      status: "read"
-    },
-    {
-      isbn: "9780553103540",
-      userId: 1,
-      status: "unread"
-    },
-  ])
+  const [bookUsers, setBookUsers] = useState<BookUser[]>([])
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
@@ -67,7 +37,6 @@ export default function MyCollection() {
     await fetchBookUsers()
   }
 
-  // Fetch Books from API
   // Fetch Books from API
   const fetchBooks = async () => {
     try {
@@ -160,19 +129,25 @@ export default function MyCollection() {
       <Navbar userId={userId} username="admin" />
 
       <div className="container mx-auto p-4 max-w-7xl">
+
         <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-2xl font-bold">My Collection</h1>
 
-          <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search collection..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+          <div className="flex w-full md:w-auto gap-2">
+            <div className="relative flex-1 md:w-96">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search collection..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
           </div>
         </header>
+
+
 
         {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 

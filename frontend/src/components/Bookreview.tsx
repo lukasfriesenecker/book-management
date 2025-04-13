@@ -281,9 +281,6 @@ export default function BookReviewDialog({ book, userId }: BookReviewDialogProps
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
-            Close
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
