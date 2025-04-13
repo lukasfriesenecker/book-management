@@ -17,7 +17,7 @@ interface Book {
 
 interface BookUser {
   userId: number
-  bookIsbn: string
+  isbn: string
   status: "read" | "unread"
 }
 
@@ -25,35 +25,35 @@ export default function MyCollection() {
   const userId = 1
   const [books, setBooks] = useState<Book[]>([
     {
-        isbn: "9780553593716",
-        title: "Cy Ganderton",
-        author: "Test1",
-        year: "2004"
+      isbn: "9780553593716",
+      title: "Cy Ganderton",
+      author: "Test1",
+      year: "2004"
     },
     {
-        isbn: "9780553103540",
-        title: "Hart Hagerty",
-        author: "Test1",
-        year: "2004"
+      isbn: "9780553103540",
+      title: "Hart Hagerty",
+      author: "Test1",
+      year: "2004"
     },
     {
-        isbn: "9780553106633",
-        title: "Brice Swyre",
-        author: "Test1",
-        year: "2004"
+      isbn: "9780553106633",
+      title: "Brice Swyre",
+      author: "Test1",
+      year: "2004"
     },
   ])
   const [error, setError] = useState("")
   const [bookUsers, setBookUsers] = useState<BookUser[]>([
     {
-        bookIsbn: "9780553106633",
-        userId: 1,
-        status: "read"
+      isbn: "9780553106633",
+      userId: 1,
+      status: "read"
     },
     {
-        bookIsbn: "9780553103540",
-        userId: 1,
-        status: "unread"
+      isbn: "9780553103540",
+      userId: 1,
+      status: "unread"
     },
   ])
   const [searchQuery, setSearchQuery] = useState("")
@@ -67,6 +67,7 @@ export default function MyCollection() {
     await fetchBookUsers()
   }
 
+  // Fetch Books from API
   // Fetch Books from API
   const fetchBooks = async () => {
     try {
@@ -95,24 +96,23 @@ export default function MyCollection() {
 
   // Check if a book is in the user's collection
   const isInCollection = (isbn: string): boolean => {
-    return bookUsers.some((bu) => bu.bookIsbn === isbn)
+    return bookUsers.some((bu) => bu.isbn === isbn)
   }
 
   // Get the read status of a book from bookUsers
   const getBookStatus = (isbn: string): "read" | "unread" => {
-    const bookUser = bookUsers.find((bu) => bu.bookIsbn === isbn)
-    return bookUser ? bookUser.status : "unread"
+    const bookUser = bookUsers.find((bu) => bu.isbn === isbn)
+    return bookUser ? bookUser.status.toLowerCase() as "read" | "unread" : "unread"
   }
 
   // Filter books based on search query and only show collection books
   const filteredBooks = books.filter((book) => {
-    // Filter by search query and only show books in collection
     const matchesSearch =
       book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
       book.isbn.includes(searchQuery)
 
-    return matchesSearch && isInCollection(book.isbn)
+    return isInCollection(book.isbn) && matchesSearch
   })
 
   // Toggle read status
@@ -131,7 +131,7 @@ export default function MyCollection() {
       toast.success(`Book marked as ${newStatus}!`)
 
       // Update local state
-      setBookUsers(bookUsers.map((bu) => (bu.bookIsbn === isbn ? { ...bu, status: newStatus } : bu)))
+      setBookUsers(bookUsers.map((bu) => (bu.isbn === isbn ? { ...bu, status: newStatus } : bu)))
     } catch (error) {
       console.error("Error updating read status:", error)
       toast.error("Failed to update read status. Please try again.")
@@ -148,7 +148,7 @@ export default function MyCollection() {
       toast.success("Book removed from your collection!")
 
       // Update local state by removing the book from bookUsers
-      setBookUsers(bookUsers.filter((bu) => bu.bookIsbn !== isbn))
+      setBookUsers(bookUsers.filter((bu) => bu.isbn !== isbn))
     } catch (error) {
       console.error("Error removing from collection:", error)
       toast.error("Failed to remove book from collection. Please try again.")
