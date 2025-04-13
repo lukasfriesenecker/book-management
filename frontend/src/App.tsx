@@ -4,6 +4,7 @@ import Collection from "./pages/Collection";
 import Users from "./pages/Users";
 import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
+import Dashboard from "./pages/Dashboard";
 import { Toaster } from "sonner"
   
 
@@ -19,6 +20,7 @@ function App() {
       <Route path="/users" element={<Users />} />
       <Route path="/login" element={<LogIn/>} />
       <Route path="/signup" element={<SignUp/>} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   </div>

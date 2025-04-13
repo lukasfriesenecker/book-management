@@ -31,11 +31,7 @@ interface User {
 
 export default function UserList() {
   const userId = 1
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, username: "admin", role: "ADMIN" },
-    { id: 2, username: "leo123", role: "USER" },
-    { id: 3, username: "olivia123", role: "USER" },
-  ])
+  const [users, setUsers] = useState<User[]>([ ])
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(true)
