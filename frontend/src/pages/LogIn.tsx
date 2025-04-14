@@ -60,7 +60,7 @@ export default function LogIn() {
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="username"
-                    placeholder="johndoe"
+                    placeholder=""
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="pl-10"
