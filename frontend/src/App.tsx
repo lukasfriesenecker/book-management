@@ -14,7 +14,7 @@ function App() {
   <div>
     <Toaster />
     <Routes>
-      <Route path="/" element={<Books />} />
+      <Route path="/" element={<LogIn />} />
       <Route path="/books" element={<Books />} />
       <Route path="/collection/:userId" element={<Collection />} />
       <Route path="/users" element={<Users />} />
