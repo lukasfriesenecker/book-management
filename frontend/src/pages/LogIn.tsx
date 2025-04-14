@@ -7,6 +7,11 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
 
+interface User {
+  username: string
+  password?: string
+}
+
 export default function LogIn() {
   const [isLoading, setIsLoading] = useState(false)
   const [password, setPassword] = useState("")
@@ -14,12 +19,13 @@ export default function LogIn() {
   const navigate = useNavigate()
   const [username, setUsername] = useState("")
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
     toast("Login successful!")
-       navigate("/books")
+       navigate("/dashboard")
           
     } catch (err) {
       setError("An error occurred during login. Please try again.")

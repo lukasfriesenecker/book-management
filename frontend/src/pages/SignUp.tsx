@@ -7,17 +7,54 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
+import api from "../api"
+
+interface User {
+  id: number
+  username: string
+  password?: string
+  role: string
+}
 
 export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false)
-  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const navigate = useNavigate()
+  const [,setError] = useState("")
+  const [currentUser, setCurrentUser] = useState<User>({
+    id: 0,
+    username: "",
+    role: "USER",
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("")
+
+    // Basic validation
+    if (!currentUser.username || !password || !confirmPassword) {
+      setError("Please fill in all fields")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long")
+      return
+    }
     try {
+      const newUser = {
+        ...currentUser,
+        password
+      }
+
+      // Add new user
+      await api.post("/users", newUser)
 
       toast.success("Account created", {
         description: "Your account has been successfully created!",
@@ -52,9 +89,8 @@ export default function SignUp() {
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="username"
-                    placeholder="johndoe"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={currentUser.username}
+                    onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
                     className="pl-10"
                     disabled={isLoading}
                   />
@@ -67,7 +103,7 @@ export default function SignUp() {
                   <Input
                     id="password"
                     type="password"
-                    value={password}
+                    value={currentUser.password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
                     disabled={isLoading}
@@ -88,7 +124,7 @@ export default function SignUp() {
                   />
                 </div>
               </div>
-              
+
               <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isLoading}>
                 {isLoading ? "Creating account..." : "Create account"}
               </Button>
@@ -96,16 +132,16 @@ export default function SignUp() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-      <div className="text-sm text-gray-600">
-        Already have an account?{" "}
-        <span
-          onClick={() => navigate("/login")}
-          className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
-        >
-          Sign in
-        </span>
-      </div>
-    </CardFooter>
+          <div className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <span
+              onClick={() => navigate("/login")}
+              className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer"
+            >
+              Sign in
+            </span>
+          </div>
+        </CardFooter>
       </Card>
     </div>
   )

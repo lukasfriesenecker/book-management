@@ -16,6 +16,7 @@ import { Edit, Plus, Search, Trash2, BookMarked } from "lucide-react"
 import { toast } from "sonner"
 import { Navbar } from "@/components/Navbar";
 import api from "../api"
+import BookReviewDialog from "@/components/Bookreview"
 
 interface Book {
     isbn: string
@@ -26,32 +27,13 @@ interface Book {
 
 interface BookUser {
     userId: number
-    bookIsbn: string
+    isbn: string
     status: "read" | "unread"
 }
 
 export default function AllBooks() {
     const userId = 1
-    const [books, setBooks] = useState<Book[]>([
-        {
-            isbn: "9780553593716",
-            title: "Cy Ganderton",
-            author: "Test1",
-            year: "2004"
-        },
-        {
-            isbn: "9780553103540",
-            title: "Hart Hagerty",
-            author: "Test1",
-            year: "2004"
-        },
-        {
-            isbn: "9780553106633",
-            title: "Brice Swyre",
-            author: "Test1",
-            year: "2004"
-        },
-    ])
+    const [books, setBooks] = useState<Book[]>([])
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [bookUsers, setBookUsers] = useState<BookUser[]>([])
@@ -102,7 +84,7 @@ export default function AllBooks() {
 
     // Check if a book is in the user's collection
     const isInCollection = (isbn: string): boolean => {
-        return bookUsers.some((bu) => bu.bookIsbn === isbn)
+        return bookUsers.some((bu) => bu.isbn === isbn)
     }
 
     // Filter books based on search query
@@ -120,34 +102,44 @@ export default function AllBooks() {
     const toggleCollection = async (isbn: string) => {
         setError("")
         setSuccess("")
-
+    
+        if (!userId) {
+            toast.error("User ID missing.")
+            return
+        }
+    
         const book = books.find((b) => b.isbn === isbn)
-        if (!book) return
-
+        if (!book) {
+            console.warn(`Book with ISBN ${isbn} not found`)
+            toast.error("Book not found.")
+            return
+        }
+    
         const inCollection = isInCollection(isbn)
-
+    
         try {
             if (inCollection) {
-                // Remove from collection
                 await api.delete(`/books-users/${isbn}/${userId}`)
                 toast.success("Book removed from your collection!")
             } else {
-                // Add to collection
                 await api.post(`/books-users/${isbn}/${userId}`)
+                console.log(`Calling: /books-users/${isbn}/${userId}`)
+                console.log("Book added to collection:", isbn)
                 toast.success("Book added to your collection!")
             }
-
-            // Refresh the user's collection
+    
             await fetchBookUsers()
         } catch (error) {
             console.error("Error updating collection:", error)
             toast.error(
                 inCollection
                     ? "Failed to remove book from collection. Please try again."
-                    : "Failed to add book to collection. Please try again.",
+                    : "Failed to add book to collection. Please try again."
             )
+            setError("Something went wrong. Please try again later.")
         }
     }
+    
 
     // Delete book
     const deleteBook = async (isbn: string) => {
@@ -395,7 +387,7 @@ interface BookGridProps {
 function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: BookGridProps) {
     // Helper function to check if a book is in the collection
     const isInCollection = (isbn: string): boolean => {
-        return bookUsers.some((bu) => bu.bookIsbn === isbn)
+        return bookUsers.some((bu) => bu.isbn === isbn)
     }
 
     return (
@@ -416,29 +408,29 @@ function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: Bo
                             <p className="text-gray-600 mb-2">{book.author}</p>
 
                             <div className="text-sm text-gray-500 mb-4">
-  <p className="mb-1">Published: {book.year}</p>
-  <div className="flex justify-between items-center">
-    <p className="m-0">ISBN: {book.isbn}</p>
-    <div className="flex gap-1">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onEdit(book)}
-        className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => onDelete(book.isbn)}
-        className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
-  </div>
-</div>
+                                <p className="mb-1">Published: {book.year}</p>
+                                <div className="flex justify-between items-center">
+                                    <p className="m-0">ISBN: {book.isbn}</p>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onEdit(book)}
+                                            className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onDelete(book.isbn)}
+                                            className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
 
                             <Button
                                 className={`w-full mt-3 ${inCollection ? "bg-indigo-600 hover:bg-indigo-700" : "bg-blue-600 hover:bg-blue-700"
@@ -449,6 +441,7 @@ function BookGrid({ books, bookUsers, onToggleCollection, onDelete, onEdit }: Bo
                                 <BookMarked className="h-4 w-4 mr-2" />
                                 {inCollection ? "Uncollect" : "Collect"}
                             </Button>
+                            <BookReviewDialog book={book} userId={1} />
                         </CardContent>
                     </Card>
                 )

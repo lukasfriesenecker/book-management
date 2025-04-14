@@ -6,6 +6,7 @@ import { AuthMiddleware } from './common/middleware/auth.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   app.use(new AuthMiddleware().use);
   app.useGlobalGuards(new RolesGuard(new Reflector()));
