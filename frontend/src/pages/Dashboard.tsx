@@ -19,8 +19,8 @@ interface Book {
 
 interface BookUser {
   userId: number
-  bookIsbn: string
-  status: "read" | "unread"
+  isbn: string
+  status: "READ" | "UNREAD"
 }
 
 interface Review {
@@ -50,7 +50,7 @@ export default function Dashboard() {
         setBookUsers(bookUsersRes.data)
 
         // Fetch reviews for books in collection
-        const reviewsPromises = bookUsersRes.data.map((bu: BookUser) => api.get(`/reviews/${bu.bookIsbn}`))
+        const reviewsPromises = bookUsersRes.data.map((bu: BookUser) => api.get(`/reviews/${bu.isbn}`))
         const reviewsResults = await Promise.all(reviewsPromises)
         const allReviews = reviewsResults.flatMap((res) => res.data)
         setReviews(allReviews)
@@ -75,7 +75,7 @@ export default function Dashboard() {
   // Calculate statistics
   const totalBooks = books.length
   const booksInCollection = bookUsers.length
-  const readBooks = bookUsers.filter((bu) => bu.status === "read").length
+  const readBooks = bookUsers.filter((bu) => bu.status === "READ").length
   const readPercentage = booksInCollection > 0 ? Math.round((readBooks / booksInCollection) * 100) : 0
 
   // Get top rated books
