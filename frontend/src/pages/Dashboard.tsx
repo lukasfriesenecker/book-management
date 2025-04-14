@@ -1,9 +1,12 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, BookMarked, CheckCircle2, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Navbar } from "@/components/Navbar"
+import { BookSpinner } from "@/components/Bookspinner"
 import { useNavigate } from "react-router-dom"
 import api from "../api"
 
@@ -38,6 +41,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
+      const start = Date.now()
       try {
         // Fetch all required data
         const [booksRes, bookUsersRes] = await Promise.all([api.get("/books"), api.get(`/books-users/${userId}`)])
@@ -52,9 +56,17 @@ export default function Dashboard() {
         setReviews(allReviews)
       } catch (error) {
         console.error("Error fetching dashboard data:", error)
-      } finally {
-        setLoading(false)
-      }
+      }finally {
+        const elapsed = Date.now() - start
+        const remaining = 1500 - elapsed
+  
+        // Ensure the spinner shows for at least 3 seconds
+        if (remaining > 0) {
+          setTimeout(() => setLoading(false), remaining)
+        } else {
+          setLoading(false)
+        }
+    }
     }
 
     fetchData()
@@ -83,21 +95,19 @@ export default function Dashboard() {
     .sort((a, b) => b.avgRating - a.avgRating)
     .slice(0, 5)
 
-  if (loading) {
-    return (
-      <div>
-        <Navbar userId={userId} username="admin" />
-        <div className="container mx-auto p-4 max-w-7xl">
-          <div className="flex justify-center items-center h-[60vh]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-              <p className="text-gray-500">Loading dashboard data...</p>
+    if (loading) {
+        return (
+          <div className="flex flex-col min-h-screen">
+            <Navbar userId={userId} username="admin" />
+            <div className="flex-grow flex items-center justify-center">
+              <div className="text-center">
+                <BookSpinner className="mx-auto mb-4" />
+                <p className="text-gray-500">Loading dashboard data...</p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    )
-  }
+        )
+      }
 
   return (
     <div>
@@ -106,7 +116,7 @@ export default function Dashboard() {
       <div className="container mx-auto p-4 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-gray-500">Welcome back to your Book Management Dashboard</p>
+          <p className="text-gray-500">Welcome back to your book management dashboard</p>
         </div>
 
         {/* Stats Overview */}
@@ -155,7 +165,7 @@ export default function Dashboard() {
                       {readBooks} of {booksInCollection}
                     </span>
                   </div>
-                  <Progress value={readPercentage} className="h-2 bg-gray-200" />
+                  <Progress value={readPercentage} className="h-2 bg-gray-200 bg-indigo-600" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -25,7 +25,7 @@ export default function LogIn() {
     
     try {
     toast("Login successful!")
-       navigate("/books")
+       navigate("/dashboard")
           
     } catch (err) {
       setError("An error occurred during login. Please try again.")
