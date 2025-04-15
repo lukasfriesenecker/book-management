@@ -1,6 +1,4 @@
-import api from '@/api';
-import { n } from 'node_modules/react-router/dist/development/fog-of-war-1hWhK5ey.d.mts';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface User {

@@ -49,14 +49,15 @@ export default function LogIn() {
       if (matchedUser) {
         setUser(matchedUser);
 
-        toast('Login successful!');
+        toast.success('Login successful!');
         navigate('/dashboard');
       } else {
         setError('Invalid username or password');
-        toast('Login failed!');
+        toast.error('Login failed!');
       }
     } catch (err) {
       setError('An error occurred during login. Please try again.');
+      toast.error('Login failed!');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
