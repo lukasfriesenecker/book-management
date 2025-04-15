@@ -9,19 +9,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
 
 export function Navbar() {
   const { user, logout } = useUser();
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    navigate('/login');
-    console.log('User logged out');
-  };
 
   return (
     <div className="border-b">
@@ -53,7 +45,7 @@ export function Navbar() {
           <DropdownMenuTrigger asChild>
             <div className="flex cursor-pointer items-center gap-2">
               <div className="hidden flex-col text-right md:flex">
-                <p className="text-sm font-bold">{user?.username}</p>
+                <p className="text-sm font-bold uppercase">{user?.username}</p>
                 <p className="text-xs">{user?.role}</p>
               </div>
               {
@@ -72,7 +64,7 @@ export function Navbar() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+            <DropdownMenuItem className="cursor-pointer" onClick={logout}>
               <span>Logout</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

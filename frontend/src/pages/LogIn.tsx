@@ -13,6 +13,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import api from '@/api';
+import { useUser } from '@/contexts/UserContext';
 
 interface User {
   username: string;
@@ -26,12 +28,28 @@ export default function LogIn() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
 
+  const { setUser } = useUser();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      toast('Login successful!');
-      navigate('/dashboard');
+      const response = await api.get('/users');
+      const users = response.data;
+
+      const matchedUser = users.find(
+        (user: { username: string; password: string }) =>
+          user.username === username && user.password === password,
+      );
+
+      if (matchedUser) {
+        setUser(matchedUser);
+
+        toast('Login successful!');
+        navigate('/dashboard');
+      } else {
+        toast('Login failed!');
+      }
     } catch (err) {
       setError('An error occurred during login. Please try again.');
       console.error('Login error:', err);

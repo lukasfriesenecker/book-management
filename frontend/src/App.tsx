@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Books from './pages/Books';
 import Collection from './pages/Collection';
 import Users from './pages/Users';
@@ -10,9 +10,14 @@ import { Navbar } from './components/Navbar';
 import { UserProvider } from './contexts/UserContext';
 
 function App() {
+  const location = useLocation();
+
+  const hideNavbarRoutes = ['/login', '/signup'];
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
+
   return (
     <UserProvider>
-      <Navbar />
+      {!shouldHideNavbar && <Navbar />}
       <Toaster />
       <Routes>
         <Route path="/" element={<LogIn />} />

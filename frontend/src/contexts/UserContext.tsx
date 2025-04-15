@@ -1,5 +1,7 @@
 import api from '@/api';
+import { n } from 'node_modules/react-router/dist/development/fog-of-war-1hWhK5ey.d.mts';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: number;
@@ -19,31 +21,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        localStorage.setItem('userId', '1'); // remove later
-        const userId = localStorage.getItem('userId');
-
-        if (!userId) {
-          console.log('No userId found, skipping user fetch');
-          return;
-        }
-
-        const response = await api.get(`/users/${userId}`);
-        setUser(response.data);
-      } catch (error) {
-        console.error('Failed to fetch user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const navigate = useNavigate();
 
   const logout = () => {
     setUser(null);
-    console.log('User logged out');
+    navigate('/login');
   };
 
   return (
