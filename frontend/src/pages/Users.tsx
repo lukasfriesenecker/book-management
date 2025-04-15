@@ -1,7 +1,5 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Table,
   TableBody,
@@ -19,24 +17,29 @@ import { toast } from 'sonner';
 import api from '../api';
 import { UserRole } from '@/constants/roles';
 import UserDialog from '@/components/UserDialog';
+import { getAvatarColor } from '@/utils/avatar';
+import { getInitials } from '@/utils/initials';
+import { useUser } from '@/contexts/UserContext';
+import { Badge } from '@/components/ui/badge';
 
 interface User {
   id: number;
   username: string;
-  password?: string;
+  password: string;
   role: UserRole;
 }
 
 export default function UserList() {
-  const userId = 1;
-  const [users, setUsers] = useState<User[]>([]);
+  const { user } = useUser();
+
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-
-  const [preCredentials, setPreCredentials] = useState({
+  const [selectedUser, setSelectedUser] = useState({
     id: -1,
     username: '',
     password: '',
@@ -52,73 +55,47 @@ export default function UserList() {
     try {
       setLoading(true);
       const response = await api.get('/users');
-      if (response.status === 200) {
-        setUsers(response.data);
-      }
+      setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching users: ', error);
       setError('Failed to load users. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Generate avatar initials from username
-  const getInitials = (username: string) => {
-    return username.substring(0, 2).toUpperCase();
-  };
-
-  // Generate a consistent color based on user id
-  const getAvatarColor = (id: number) => {
-    const colors = [
-      'bg-red-500',
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-yellow-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-teal-500',
-    ];
-    return colors[id % colors.length];
-  };
-
-  // Filter users based on search query
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Open dialog for adding a new user
   function openAddDialog() {
+    setSelectedUser({
+      id: -1,
+      username: '',
+      password: '',
+      confirmPassword: '',
+      role: UserRole.USER,
+    });
     setIsEditMode(false);
     setIsDialogOpen(true);
   }
 
-  // Open dialog for editing an existing user
   function openEditDialog(user: User) {
-    setPreCredentials({
+    setSelectedUser({
       id: user.id,
       username: user.username,
-      password: '',
-      confirmPassword: '',
+      password: user.password,
+      confirmPassword: user.password,
       role: user.role,
     });
     setIsEditMode(true);
     setIsDialogOpen(true);
   }
 
-  // Delete user
   const deleteUser = async (id: number) => {
-    // Don't allow deleting yourself
-    if (id === userId) {
-      toast.error('You cannot delete your own account');
-      return;
-    }
-
     try {
-      // Delete the user
       await api.delete(`/users/${id}`);
 
       toast.success('User deleted successfully');
@@ -133,25 +110,25 @@ export default function UserList() {
   return (
     <div>
       <div className="container mx-auto max-w-7xl p-4">
-        <header className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
+        <header className="mt-6 mb-4 flex flex-col items-center justify-between gap-4 md:flex-row">
           <h1 className="text-2xl font-bold">Users</h1>
 
           <div className="flex w-full gap-2 md:w-auto">
-            <div className="relative flex-1 md:w-64">
-              <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+            <div className="relative flex flex-1 items-center md:w-64">
+              <Search className="text-muted-foreground absolute left-2.5 size-4" />
               <Input
                 placeholder="Search users..."
-                className="pl-8"
+                className="pl-8.5"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             <Button
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
               onClick={openAddDialog}
             >
-              <UserPlus className="mr-2 h-4 w-4" />
+              <UserPlus className="mr-2 size-4" />
               Add User
             </Button>
           </div>
@@ -160,8 +137,10 @@ export default function UserList() {
         <Card>
           <CardContent className="p-0">
             {error && (
-              <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
-                {error}
+              <div className="px-4">
+                <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+                  {error}
+                </div>
               </div>
             )}
 
@@ -187,30 +166,30 @@ export default function UserList() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredUsers.map((user) => (
-                      <TableRow key={user.id}>
+                    filteredUsers.map((data) => (
+                      <TableRow key={data.id}>
                         <TableCell className="pl-8">
                           <Avatar>
-                            <AvatarImage
-                              src={/*user.avatarUrl ||*/ '/placeholder.svg'}
-                              alt={user.username}
-                            />
-                            <AvatarFallback className={getAvatarColor(user.id)}>
-                              {getInitials(user.username)}
+                            <AvatarFallback className={getAvatarColor(data.id)}>
+                              {getInitials(data.username)}
                             </AvatarFallback>
                           </Avatar>
                         </TableCell>
                         <TableCell className="font-medium">
-                          {user.username}
+                          {data.username}
+                          {data.id === user?.id && (
+                            <Badge className="ml-3 bg-indigo-600">ME</Badge>
+                          )}
                         </TableCell>
-                        <TableCell>{user.role}</TableCell>
+                        <TableCell>{data.role}</TableCell>
                         <TableCell className="pr-8 text-right">
                           <div className="flex justify-end gap-2">
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => openEditDialog(user)}
-                              className="h-8 w-8 p-0"
+                              onClick={() => openEditDialog(data)}
+                              className="size-8 cursor-pointer"
+                              disabled={data.id === user?.id}
                             >
                               <Edit className="h-4 w-4" />
                               <span className="sr-only">Edit</span>
@@ -218,9 +197,9 @@ export default function UserList() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => deleteUser(user.id)}
-                              className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
-                              disabled={user.id === userId}
+                              onClick={() => deleteUser(data.id)}
+                              className="size-8 cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
+                              disabled={data.id === user?.id}
                             >
                               <Trash2 className="h-4 w-4" />
                               <span className="sr-only">Delete</span>
@@ -242,7 +221,7 @@ export default function UserList() {
         loading={loading}
         isDialogOpen={isDialogOpen}
         setIsDialogOpen={setIsDialogOpen}
-        preCredentials={preCredentials}
+        selectedUser={selectedUser}
         onSave={(updatedUser: User) => {
           console.warn(updatedUser);
           if (isEditMode) {

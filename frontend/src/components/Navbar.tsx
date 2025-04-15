@@ -19,6 +19,8 @@ import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
 import { BurgerItem } from './BurgerItem';
 import { UserRole } from '@/constants/roles';
+import { getInitials } from '@/utils/initials';
+import { getAvatarColor } from '@/utils/avatar';
 
 export function Navbar() {
   const { user, logout } = useUser();
@@ -78,12 +80,8 @@ export function Navbar() {
               </div>
               {
                 <Avatar className="size-10">
-                  <AvatarImage
-                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.username}`}
-                    alt={user?.username}
-                  />
-                  <AvatarFallback className="bg-indigo-600 text-white">
-                    {user?.username.substring(0, 2).toUpperCase()}
+                  <AvatarFallback className={getAvatarColor(user?.id || 0)}>
+                    {getInitials(user?.username || '')}
                   </AvatarFallback>
                 </Avatar>
               }

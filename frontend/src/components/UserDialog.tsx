@@ -35,7 +35,7 @@ interface UserDialogProps {
   loading: boolean;
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
-  preCredentials: Credentials;
+  selectedUser: Credentials;
   onSave: (user: Credentials) => void;
 }
 
@@ -44,14 +44,14 @@ export default function UserDialog({
   loading,
   isDialogOpen,
   setIsDialogOpen,
-  preCredentials,
+  selectedUser,
   onSave,
 }: UserDialogProps) {
-  const [formData, setFormData] = useState<Credentials>(preCredentials);
+  const [formData, setFormData] = useState<Credentials>(selectedUser);
 
   useEffect(() => {
-    setFormData(preCredentials);
-  }, [preCredentials]);
+    setFormData(selectedUser);
+  }, [selectedUser]);
 
   const handleInputChange =
     (field: keyof Credentials) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +77,7 @@ export default function UserDialog({
     try {
       let response;
       if (isEditMode) {
-        response = await api.put(`/users/${preCredentials?.id}`, {
+        response = await api.put(`/users/${selectedUser?.id}`, {
           password: formData.password,
           role: formData.role,
         });
@@ -118,7 +118,7 @@ export default function UserDialog({
             identifier="username"
             value={formData.username}
             onChange={handleInputChange('username')}
-            disabled={loading}
+            disabled={loading || isEditMode}
           />
 
           <DialogInput
