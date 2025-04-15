@@ -131,8 +131,6 @@ export default function MyCollection() {
 
   return (
     <div>
-      {/* <Navbar userId={userId} username="admin" />*/}
-
       <div className="container mx-auto max-w-7xl p-4">
         <header className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
           <h1 className="text-2xl font-bold">My Collection</h1>

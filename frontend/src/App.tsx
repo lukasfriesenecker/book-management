@@ -11,6 +11,7 @@ import { UserProvider } from './contexts/UserContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import NotFound from './pages/NotFound';
 import Unauthorized from './pages/Unauthorized';
+import { UserRole } from './constants/roles';
 
 function App() {
   const location = useLocation();
@@ -53,7 +54,7 @@ function App() {
         <Route
           path="/users"
           element={
-            <ProtectedRoute requiredRole="ADMIN">
+            <ProtectedRoute requiredRole={UserRole.ADMIN}>
               <Users />
             </ProtectedRoute>
           }

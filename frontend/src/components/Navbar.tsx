@@ -11,19 +11,14 @@ import {
 import {
   Menubar,
   MenubarContent,
-  MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
   MenubarTrigger,
 } from '@/components/ui/menubar';
 import { Link } from 'react-router-dom';
 import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
 import { BurgerItem } from './BurgerItem';
+import { UserRole } from '@/constants/roles';
 
 export function Navbar() {
   const { user, logout } = useUser();
@@ -65,9 +60,12 @@ export function Navbar() {
             <NavbarItem
               link={`/collection/1`}
               icon={<Library />}
-              text="Library"
+              text="Collection"
             />
-            <NavbarItem link={`/users`} icon={<Users />} text="Users" />
+
+            {user?.role === UserRole.ADMIN && (
+              <NavbarItem link={`/users`} icon={<Users />} text="Users" />
+            )}
           </nav>
         </div>
 
@@ -95,7 +93,7 @@ export function Navbar() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer" onClick={logout}>
-              <span>Logout</span>
+              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

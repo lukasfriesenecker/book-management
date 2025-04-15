@@ -13,48 +13,35 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Edit, Search, Trash2, UserPlus, Lock, User } from 'lucide-react';
+import { Edit, Search, Trash2, UserPlus, User } from 'lucide-react';
 import { toast } from 'sonner';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import api from '../api';
+import { UserRole } from '@/constants/roles';
+import UserDialog from '@/components/UserDialog';
 
 interface User {
   id: number;
   username: string;
   password?: string;
-  role: string;
-  avatarUrl?: string;
+  role: UserRole;
 }
 
 export default function UserList() {
   const userId = 1;
   const [users, setUsers] = useState<User[]>([]);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User>({
-    id: 0,
+
+  const [preCredentials, setPreCredentials] = useState({
+    id: -1,
     username: '',
-    role: 'USER',
+    password: '',
+    confirmPassword: '',
+    role: UserRole.USER,
   });
 
   useEffect(() => {
@@ -105,22 +92,19 @@ export default function UserList() {
 
   // Open dialog for adding a new user
   function openAddDialog() {
-    setCurrentUser({
-      id: 0,
-      username: '',
-      role: 'USER',
-    });
-    setPassword('');
-    setConfirmPassword('');
     setIsEditMode(false);
     setIsDialogOpen(true);
   }
 
   // Open dialog for editing an existing user
   function openEditDialog(user: User) {
-    setCurrentUser({ ...user });
-    setPassword('');
-    setConfirmPassword('');
+    setPreCredentials({
+      id: user.id,
+      username: user.username,
+      password: '',
+      confirmPassword: '',
+      role: user.role,
+    });
     setIsEditMode(true);
     setIsDialogOpen(true);
   }
@@ -146,72 +130,8 @@ export default function UserList() {
     }
   };
 
-  // Add or update a user
-  const addOrUpdateUser = async () => {
-    // Basic validation
-    if (!currentUser.username || !currentUser.role) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (!isEditMode && (!password || !confirmPassword)) {
-      toast.error('Please provide a password');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
-    try {
-      if (isEditMode) {
-        // Update existing user
-        const userData = {
-          ...currentUser,
-          // Only include password if it was changed
-          ...(password ? { password } : {}),
-        };
-
-        const response = await api.put(`/users/${currentUser.id}`, userData);
-        toast.success('User updated successfully');
-
-        // Update the user in local state
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === currentUser.id ? response.data : user,
-          ),
-        );
-      } else {
-        // For new users, always include password
-        const newUser = {
-          ...currentUser,
-          password,
-        };
-
-        // Add new user
-        const response = await api.post('/users', newUser);
-        toast.success('User added successfully');
-
-        // Add to local state
-        setUsers([...users, response.data]);
-      }
-
-      setIsDialogOpen(false);
-    } catch (error) {
-      console.error('Error saving user:', error);
-      toast.error(
-        isEditMode
-          ? 'Failed to update user. Please try again.'
-          : 'Failed to add user. Please try again.',
-      );
-    }
-  };
-
   return (
     <div>
-      {/*<Navbar userId={userId} username="admin" />*/}
-
       <div className="container mx-auto max-w-7xl p-4">
         <header className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
           <h1 className="text-2xl font-bold">Users</h1>
@@ -272,7 +192,7 @@ export default function UserList() {
                         <TableCell className="pl-8">
                           <Avatar>
                             <AvatarImage
-                              src={user.avatarUrl || '/placeholder.svg'}
+                              src={/*user.avatarUrl ||*/ '/placeholder.svg'}
                               alt={user.username}
                             />
                             <AvatarFallback className={getAvatarColor(user.id)}>
@@ -317,110 +237,25 @@ export default function UserList() {
         </Card>
       </div>
 
-      {/* User Dialog (Add/Edit) */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isEditMode ? 'Edit User' : 'Add New User'}
-            </DialogTitle>
-            <DialogDescription>
-              {isEditMode
-                ? 'Update the user details.'
-                : 'Enter the details of the new user.'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <div className="relative col-span-3">
-                <User className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
-                <Input
-                  id="username"
-                  className="col-span-3 pl-10"
-                  value={currentUser.username}
-                  onChange={(e) =>
-                    setCurrentUser({ ...currentUser, username: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="password" className="text-right">
-                Password
-              </Label>
-              <div className="relative col-span-3">
-                <Lock className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
-                  placeholder={
-                    isEditMode ? 'Leave blank to keep current password' : ''
-                  }
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="confirmPassword" className="text-left">
-                Confirm Password
-              </Label>
-              <div className="relative col-span-3">
-                <Lock className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10"
-                  placeholder={
-                    isEditMode ? 'Leave blank to keep current password' : ''
-                  }
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="role" className="text-right">
-                Role
-              </Label>
-              <Select
-                value={currentUser.role}
-                onValueChange={(value) =>
-                  setCurrentUser({ ...currentUser, role: value })
-                }
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ADMIN">ADMIN</SelectItem>
-                  <SelectItem value="USER">USER</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              onClick={addOrUpdateUser}
-              className="bg-indigo-600 hover:bg-indigo-700"
-            >
-              {isEditMode ? 'Save Changes' : 'Add User'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <UserDialog
+        isEditMode={isEditMode}
+        loading={loading}
+        isDialogOpen={isDialogOpen}
+        setIsDialogOpen={setIsDialogOpen}
+        preCredentials={preCredentials}
+        onSave={(updatedUser: User) => {
+          console.warn(updatedUser);
+          if (isEditMode) {
+            setUsers((prevUsers) =>
+              prevUsers.map((user) =>
+                user.id === updatedUser.id ? updatedUser : user,
+              ),
+            );
+          } else {
+            setUsers((prevUsers) => [...prevUsers, updatedUser]);
+          }
+        }}
+      />
     </div>
   );
 }

@@ -114,7 +114,6 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
-        {/*<Navbar userId={userId} username="admin" />*/}
         <div className="flex flex-grow items-center justify-center">
           <div className="text-center">
             <BookSpinner className="mx-auto mb-4" />
@@ -127,8 +126,6 @@ export default function Dashboard() {
 
   return (
     <div>
-      {/*<Navbar userId={userId} username="admin" />*/}
-
       <div className="container mx-auto max-w-7xl p-4">
         <div className="mb-8">
           <h1 className="mb-2 text-3xl font-bold">Dashboard</h1>
@@ -187,7 +184,7 @@ export default function Dashboard() {
                   </div>
                   <Progress
                     value={readPercentage}
-                    className="h-2 bg-gray-200 bg-indigo-600"
+                    className="h-2 bg-indigo-600"
                   />
                 </div>
 
