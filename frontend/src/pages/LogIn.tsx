@@ -15,23 +15,27 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import api from '@/api';
 import { useUser } from '@/contexts/UserContext';
+import CredentialInput from '@/components/CredentialInput';
 
 interface User {
   username: string;
-  password?: string;
+  password: string;
 }
 
 export default function LogIn() {
   const [isLoading, setIsLoading] = useState(false);
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [formData, setFormData] = useState<User>({
+    username: '',
+    password: '',
+  });
 
   const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await api.get('/users');
@@ -39,7 +43,8 @@ export default function LogIn() {
 
       const matchedUser = users.find(
         (user: { username: string; password: string }) =>
-          user.username === username && user.password === password,
+          user.username === formData.username &&
+          user.password === formData.password,
       );
 
       if (matchedUser) {
@@ -57,6 +62,11 @@ export default function LogIn() {
       setIsLoading(false);
     }
   };
+
+  const handleInputChange =
+    (field: keyof User) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, [field]: e.target.value })); // Update specific field in formData
+    };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -82,36 +92,24 @@ export default function LogIn() {
           )}
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <div className="relative">
-                  <User className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
-                  <Input
-                    id="username"
-                    placeholder=""
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <div className="relative">
-                  <Lock className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
+              <CredentialInput
+                label="Username"
+                icon={<User />}
+                type="text"
+                identifier="username"
+                value={formData.username}
+                onChange={handleInputChange('username')}
+                disabled={isLoading}
+              />
+              <CredentialInput
+                label="Password"
+                icon={<Lock />}
+                type="password"
+                identifier="password"
+                value={formData.password}
+                onChange={handleInputChange('password')}
+                disabled={isLoading}
+              />
 
               <Button
                 type="submit"
