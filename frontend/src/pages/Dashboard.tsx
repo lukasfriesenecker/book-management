@@ -11,7 +11,6 @@ import {
 import { BookOpen, BookMarked, CheckCircle2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Navbar } from '@/components/Navbar';
 import { BookSpinner } from '@/components/Bookspinner';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';

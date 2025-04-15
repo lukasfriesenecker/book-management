@@ -32,7 +32,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import api from '../api';
-import { Navbar } from '@/components/Navbar';
 
 interface User {
   id: number;

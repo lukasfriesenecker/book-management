@@ -14,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Edit, Plus, Search, Trash2, BookMarked } from 'lucide-react';
 import { toast } from 'sonner';
-import { Navbar } from '@/components/Navbar';
 import api from '../api';
 import BookReviewDialog from '@/components/Bookreview';
 

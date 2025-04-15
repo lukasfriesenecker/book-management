@@ -1,4 +1,4 @@
-import { BookOpen, Library, Users } from 'lucide-react';
+import { BookOpen, Library, Menu, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -8,26 +8,56 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarSub,
+  MenubarSubContent,
+  MenubarSubTrigger,
+  MenubarTrigger,
+} from '@/components/ui/menubar';
 import { Link } from 'react-router-dom';
 import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
+import { BurgerItem } from './BurgerItem';
 
 export function Navbar() {
   const { user, logout } = useUser();
 
   return (
     <div className="border-b">
-      <div className="container mx-auto flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         <div className="flex items-center gap-6">
-          <h1 className="flex items-center gap-2 text-xl font-bold">
+          <h1 className="hidden items-center gap-2 text-xl font-bold md:flex">
             <Link
               to="/dashboard"
               className="flex items-center gap-2 transition-colors hover:text-indigo-600"
             >
-              <BookOpen className="h-6 w-6 text-indigo-600" />
+              <BookOpen className="h-6 w-6" />
               Book Management
             </Link>
           </h1>
+
+          <Menubar className="border-0 shadow-none md:hidden">
+            <MenubarMenu>
+              <MenubarTrigger className="cursor-pointer">
+                <Menu />
+              </MenubarTrigger>
+              <MenubarContent>
+                <BurgerItem link={`/books`} icon={<BookOpen />} text="Books" />
+                <BurgerItem
+                  link={`/collection/1`}
+                  icon={<Library />}
+                  text="Library"
+                />
+                <BurgerItem link={`/users`} icon={<Users />} text="Users" />
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
 
           <nav className="hidden items-center space-x-4 md:flex lg:space-x-6">
             <NavbarItem link={`/books`} icon={<BookOpen />} text="Books" />
@@ -44,7 +74,7 @@ export function Navbar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex cursor-pointer items-center gap-2">
-              <div className="hidden flex-col text-right md:flex">
+              <div className="flex flex-col text-right">
                 <p className="text-sm font-bold uppercase">{user?.username}</p>
                 <p className="text-xs">{user?.role}</p>
               </div>

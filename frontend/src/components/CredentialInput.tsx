@@ -1,4 +1,3 @@
-import { Lock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import React from 'react';
@@ -26,9 +25,10 @@ export default function CredentialInput({
     <div className="space-y-2">
       <Label htmlFor={identifier}>{label}</Label>
       <div className="relative flex items-center">
-        {React.cloneElement(icon, {
+        {/*{React.cloneElement(icon, {
           className: 'text-muted-foreground absolute left-3 size-4',
-        })}
+        })}*/}
+        {icon}
 
         <Input
           type={type}
