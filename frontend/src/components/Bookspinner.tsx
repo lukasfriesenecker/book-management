@@ -1,12 +1,10 @@
-
 interface BookSpinnerProps {
-    className?: string
-  }
-  
-  export function BookSpinner({ className = "" }: BookSpinnerProps) { 
-    
-    return (
-        <svg
+  className?: string;
+}
+
+export function BookSpinner({ className = '' }: BookSpinnerProps) {
+  return (
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       width="120"
       height="120"
@@ -15,7 +13,7 @@ interface BookSpinnerProps {
     >
       {/* Bookshelf base */}
       <rect x="20" y="90" width="80" height="6" fill="#4F46E5" rx="2" />
-      
+
       {/* Books - Static */}
       <g>
         {/* Tall book */}
@@ -27,7 +25,7 @@ interface BookSpinnerProps {
             repeatCount="indefinite"
           />
         </rect>
-        
+
         {/* Medium book */}
         <rect x="42" y="55" width="15" height="35" fill="#818CF8" rx="1">
           <animate
@@ -38,7 +36,7 @@ interface BookSpinnerProps {
             begin="0.3s"
           />
         </rect>
-        
+
         {/* Short book */}
         <rect x="62" y="60" width="10" height="30" fill="#4F46E5" rx="1">
           <animate
@@ -49,7 +47,7 @@ interface BookSpinnerProps {
             begin="0.6s"
           />
         </rect>
-        
+
         {/* Tall book 2 */}
         <rect x="77" y="40" width="13" height="50" fill="#818CF8" rx="1">
           <animate
@@ -88,6 +86,5 @@ interface BookSpinnerProps {
         />
       </rect>
     </svg>
-    )
-  }
-  
+  );
+}

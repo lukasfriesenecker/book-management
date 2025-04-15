@@ -1,63 +1,73 @@
-import { useState } from "react"
-import { BookOpen, Lock, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
-import { useNavigate } from "react-router-dom"
+import { useState } from 'react';
+import { BookOpen, Lock, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
-  username: string
-  password?: string
+  username: string;
+  password?: string;
 }
 
 export default function LogIn() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const navigate = useNavigate()
-  const [username, setUsername] = useState("")
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
-    toast("Login successful!")
-       navigate("/dashboard")
-          
+      toast('Login successful!');
+      navigate('/dashboard');
     } catch (err) {
-      setError("An error occurred during login. Please try again.")
-      console.error("Login error:", err)
+      setError('An error occurred during login. Please try again.');
+      console.error('Login error:', err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <div className="flex justify-center mb-4">
-            <div className="bg-indigo-600 p-3 rounded-full">
+          <div className="mb-4 flex justify-center">
+            <div className="rounded-full bg-indigo-600 p-3">
               <BookOpen className="h-8 w-8 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-center">Book Management</CardTitle>
-          <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
+          <CardTitle className="text-center text-2xl font-bold">
+            Book Management
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your credentials to access your account
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">{error}</div>
+            <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
           )}
           <form onSubmit={handleSubmit}>
-
             <div className="space-y-4">
-            <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <User className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
                   <Input
                     id="username"
                     placeholder=""
@@ -73,7 +83,7 @@ export default function LogIn() {
                   <Label htmlFor="password">Password</Label>
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Lock className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
                   <Input
                     id="password"
                     type="password"
@@ -84,24 +94,29 @@ export default function LogIn() {
                   />
                 </div>
               </div>
-            
-              <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign in"}
+
+              <Button
+                type="submit"
+                className="w-full bg-indigo-600 hover:bg-indigo-700"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-      <div className="text-sm text-gray-600">
-        Don't have an account?{" "}
-        <span
-          onClick={() => navigate('/signup')}
-          className="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer">
-          Sign up
-        </span>
-      </div>
-    </CardFooter>
+          <div className="text-sm text-gray-600">
+            Don't have an account?{' '}
+            <span
+              onClick={() => navigate('/signup')}
+              className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Sign up
+            </span>
+          </div>
+        </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

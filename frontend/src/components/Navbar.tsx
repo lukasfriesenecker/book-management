@@ -1,6 +1,5 @@
-
-import { BookOpen, Library, Users } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BookOpen, Library, Users } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,62 +7,67 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+} from '@/components/ui/dropdown-menu';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { NavbarItem } from './NavbarItem';
+import { useUser } from '@/contexts/UserContext';
 
-interface NavbarProps {
-  userId: number
-  username?: string
-}
+export function Navbar() {
+  const { user, logout } = useUser();
 
-export function Navbar({ userId, username = "user" }: NavbarProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/login");
-    console.log("User logged out")
-  }
+    navigate('/login');
+    console.log('User logged out');
+  };
 
   return (
     <div className="border-b">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Link to="/dashboard" className="text-xl font-bold flex items-center gap-2 hover:text-indigo-600 transition-colors">
+          <h1 className="flex items-center gap-2 text-xl font-bold">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 transition-colors hover:text-indigo-600"
+            >
               <BookOpen className="h-6 w-6 text-indigo-600" />
-              <span>Book Management</span>
+              Book Management
             </Link>
-
           </h1>
 
-          <nav className="flex items-center space-x-4 lg:space-x-6">
-            <Link to={`/books`} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-indigo-600">
-              <BookOpen className="h-4 w-4" />
-              <span>Books</span>
-            </Link>
+          <nav className="hidden items-center space-x-4 md:flex lg:space-x-6">
+            <NavbarItem link={`/books`} icon={<BookOpen />} text="Books" />
 
-            <Link to={`/collection/${userId}`} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-indigo-600">
-              <Library className="h-4 w-4" />
-              <span>Library</span>
-            </Link>
-
-            <Link to={`/users`} className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-indigo-600">
-              <Users className="h-4 w-4" />
-              <span>Users</span>
-            </Link>
+            <NavbarItem
+              link={`/collection/1`}
+              icon={<Library />}
+              text="Library"
+            />
+            <NavbarItem link={`/users`} icon={<Users />} text="Users" />
           </nav>
         </div>
 
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="h-8 w-8 cursor-pointer">
-              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${username}`} alt={username} />
-              <AvatarFallback className="bg-indigo-600 text-white">
-                {username.substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <div className="flex cursor-pointer items-center gap-2">
+              <div className="hidden flex-col text-right md:flex">
+                <p className="text-sm font-bold">{user?.username}</p>
+                <p className="text-xs">{user?.role}</p>
+              </div>
+              {
+                <Avatar className="size-10">
+                  <AvatarImage
+                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.username}`}
+                    alt={user?.username}
+                  />
+                  <AvatarFallback className="bg-indigo-600 text-white">
+                    {user?.username.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              }
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -75,5 +79,5 @@ export function Navbar({ userId, username = "user" }: NavbarProps) {
         </DropdownMenu>
       </div>
     </div>
-  )
+  );
 }

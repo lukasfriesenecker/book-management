@@ -39,7 +39,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - WATCHPACK_POLLING=true
+      - FRONTEND_PORT=${FRONTEND_PORT}
     volumes:
       - ./frontend/src:/frontend/src
     ports:
