@@ -4,16 +4,15 @@ import { MenubarItem } from './ui/menubar';
 
 interface NavbarItemProps {
   link: string;
-  icon: React.ReactElement;
+  icon: React.ReactElement<{ className?: string }>;
   text: string;
 }
 
 export function BurgerItem({ link, icon, text }: NavbarItemProps) {
   return (
     <Link to={link}>
-      <MenubarItem className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
-        {/*{React.cloneElement(icon, { className: 'size-4' })}*/}
-        {icon}
+      <MenubarItem className="flex h-16 cursor-pointer items-center text-xl font-semibold text-gray-700">
+        {React.cloneElement(icon, { className: 'size-6 mx-2' })}
         {text}
       </MenubarItem>
     </Link>

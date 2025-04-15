@@ -3,7 +3,7 @@ import React from 'react';
 
 interface NavbarItemProps {
   link: string;
-  icon: React.ReactElement;
+  icon: React.ReactElement<{ className?: string }>;
   text: string;
 }
 
@@ -13,8 +13,7 @@ export function NavbarItem({ link, icon, text }: NavbarItemProps) {
       to={link}
       className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
     >
-      {/*{React.cloneElement(icon, { className: 'size-4' })}*/}
-      {icon}
+      {React.cloneElement(icon, { className: 'size-4' })}
       {text}
     </Link>
   );

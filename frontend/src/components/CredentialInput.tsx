@@ -4,7 +4,7 @@ import React from 'react';
 
 interface CredentialInputProps {
   label: string;
-  icon: React.ReactElement;
+  icon: React.ReactElement<{ className?: string }>;
   type: string;
   identifier: string;
   value: string;
@@ -25,10 +25,9 @@ export default function CredentialInput({
     <div className="space-y-2">
       <Label htmlFor={identifier}>{label}</Label>
       <div className="relative flex items-center">
-        {/*{React.cloneElement(icon, {
+        {React.cloneElement(icon, {
           className: 'text-muted-foreground absolute left-3 size-4',
-        })}*/}
-        {icon}
+        })}
 
         <Input
           type={type}

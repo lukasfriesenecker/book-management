@@ -47,7 +47,7 @@ export function Navbar() {
               <MenubarTrigger className="cursor-pointer">
                 <Menu />
               </MenubarTrigger>
-              <MenubarContent>
+              <MenubarContent className="w-screen md:hidden">
                 <BurgerItem link={`/books`} icon={<BookOpen />} text="Books" />
                 <BurgerItem
                   link={`/collection/1`}
