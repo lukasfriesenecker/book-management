@@ -223,7 +223,6 @@ export default function UserList() {
         setIsDialogOpen={setIsDialogOpen}
         selectedUser={selectedUser}
         onSave={(updatedUser: User) => {
-          console.warn(updatedUser);
           if (isEditMode) {
             setUsers((prevUsers) =>
               prevUsers.map((user) =>

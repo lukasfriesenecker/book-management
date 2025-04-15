@@ -18,6 +18,7 @@ export function ProtectedRoute({
   }
 
   if (requiredRole && user.role !== requiredRole) {
+    console.warn('bitte');
     return <Navigate to="/unauthorized" replace />;
   }
 

@@ -29,7 +29,7 @@ export default function LogIn() {
     password: '',
   });
 
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {

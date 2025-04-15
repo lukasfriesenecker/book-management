@@ -24,7 +24,7 @@ function App() {
       {!shouldHideNavbar && <Navbar />}
       <Toaster />
       <Routes>
-        <Route path="/" element={<LogIn />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route

@@ -151,7 +151,7 @@ export default function UserDialog({
                 setFormData((prev) => ({ ...prev, role: value as UserRole }))
               }
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="cursor-pointer">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
@@ -163,6 +163,7 @@ export default function UserDialog({
         </div>
         <DialogFooter>
           <Button
+            className="cursor-pointer"
             type="button"
             variant="outline"
             onClick={() => setIsDialogOpen(false)}
@@ -172,7 +173,7 @@ export default function UserDialog({
           <Button
             type="submit"
             onClick={addOrUpdateUser}
-            className="bg-indigo-600 hover:bg-indigo-700"
+            className="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
           >
             {isEditMode ? 'Save Changes' : 'Add User'}
           </Button>
