@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, BookMarked } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api';
+import { Header } from '@/components/Header';
 
 interface Book {
   isbn: string;
@@ -132,21 +133,12 @@ export default function MyCollection() {
   return (
     <div>
       <div className="container mx-auto max-w-7xl p-4">
-        <header className="mb-8 flex flex-col items-center justify-between gap-4 md:flex-row">
-          <h1 className="text-2xl font-bold">My Collection</h1>
-
-          <div className="flex w-full gap-2 md:w-auto">
-            <div className="relative flex-1 md:w-96">
-              <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-              <Input
-                placeholder="Search collection..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-        </header>
+        <Header
+          headline="My Collection"
+          searchText="Search collection..."
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
         {error && (
           <div className="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700">

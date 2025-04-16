@@ -21,6 +21,7 @@ import { getAvatarColor } from '@/utils/avatar';
 import { getInitials } from '@/utils/initials';
 import { useUser } from '@/contexts/UserContext';
 import { Badge } from '@/components/ui/badge';
+import { Header } from '@/components/Header';
 
 interface User {
   id: number;
@@ -110,29 +111,14 @@ export default function UserList() {
   return (
     <div>
       <div className="container mx-auto max-w-7xl p-4">
-        <header className="mt-6 mb-4 flex flex-col items-center justify-between gap-4 md:flex-row">
-          <h1 className="text-2xl font-bold">Users</h1>
-
-          <div className="flex w-full gap-2 md:w-auto">
-            <div className="relative flex flex-1 items-center md:w-64">
-              <Search className="text-muted-foreground absolute left-2.5 size-4" />
-              <Input
-                placeholder="Search users..."
-                className="pl-8.5"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <Button
-              className="cursor-pointer bg-indigo-600 hover:bg-indigo-700"
-              onClick={openAddDialog}
-            >
-              <UserPlus className="mr-2 size-4" />
-              Add User
-            </Button>
-          </div>
-        </header>
+        <Header
+          headline="Users"
+          searchText="Search users..."
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          buttonText="Add User"
+          handleClick={openAddDialog}
+        />
 
         <Card>
           <CardContent className="p-0">
