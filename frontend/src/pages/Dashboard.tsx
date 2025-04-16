@@ -48,7 +48,6 @@ export default function Dashboard() {
       setLoading(true);
       const start = Date.now();
       try {
-        // Fetch all required data
         const [booksRes, bookUsersRes] = await Promise.all([
           api.get('/books'),
           api.get(`/books-users/${userId}`),
@@ -57,7 +56,6 @@ export default function Dashboard() {
         setBooks(booksRes.data);
         setBookUsers(bookUsersRes.data);
 
-        // Fetch reviews for books in collection
         const reviewsPromises = bookUsersRes.data.map((bu: BookUser) =>
           api.get(`/reviews/${bu.isbn}`),
         );
@@ -70,7 +68,6 @@ export default function Dashboard() {
         const elapsed = Date.now() - start;
         const remaining = 1500 - elapsed;
 
-        // Ensure the spinner shows for at least 3 seconds
         if (remaining > 0) {
           setTimeout(() => setLoading(false), remaining);
         } else {
@@ -82,7 +79,6 @@ export default function Dashboard() {
     fetchData();
   }, [userId]);
 
-  // Calculate statistics
   const totalBooks = books.length;
   const booksInCollection = bookUsers.length;
   const readBooks = bookUsers.filter((bu) => bu.status === 'READ').length;
@@ -91,7 +87,6 @@ export default function Dashboard() {
       ? Math.round((readBooks / booksInCollection) * 100)
       : 0;
 
-  // Get top rated books
   const bookRatings = books.map((book) => {
     const bookReviews = reviews.filter((review) => review.isbn === book.isbn);
     const avgRating =
@@ -134,7 +129,6 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {/* Stats Overview */}
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
           <Card>
             <CardContent className="flex items-center justify-between p-6">
@@ -164,7 +158,6 @@ export default function Dashboard() {
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Reading Progress */}
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -213,7 +206,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Top Rated Books */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center">

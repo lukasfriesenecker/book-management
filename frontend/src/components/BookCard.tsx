@@ -1,5 +1,4 @@
 import { BookMarked, Edit, Trash2 } from 'lucide-react';
-import BookReviewDialog from './Bookreview';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -9,6 +8,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useEffect, useState } from 'react';
 import { isInCollection } from '@/utils/isInCollection';
 import { toast } from 'sonner';
+import ReviewDialog from './ReviewDialog';
 
 interface BookCardProps {
   book: Book;
@@ -105,7 +105,7 @@ export function BookCard({ book, handleEdit, handleDelete }: BookCardProps) {
           <BookMarked className="mr-2 size-4" />
           {inCollection ? 'Uncollect' : 'Collect'}
         </Button>
-        <BookReviewDialog book={book} userId={1} />
+        <ReviewDialog book={book} />
       </CardContent>
     </Card>
   );

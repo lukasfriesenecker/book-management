@@ -6,7 +6,7 @@ import { Book } from '@/constants/book';
 import { CollectionBookCard } from '@/components/CollectionBookCard';
 import { isInCollection } from '@/utils/isInCollection';
 
-export default function MyCollection() {
+export default function Collection() {
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [error, setError] = useState('');
@@ -29,20 +29,34 @@ export default function MyCollection() {
   };
 
   useEffect(() => {
-    setFilteredBooks(
-      books.filter(async (book) => {
-        if (!user) return false;
+    const filterBooks = async () => {
+      if (!user) {
+        setFilteredBooks([]);
+        return;
+      }
 
-        const matchesSearch =
-          book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          book.isbn.includes(searchQuery);
+      try {
+        const filtered = await Promise.all(
+          books.map(async (book) => {
+            const matchesSearch =
+              book.isbn.includes(searchQuery) ||
+              book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              book.author.toLowerCase().includes(searchQuery.toLowerCase());
 
-        const inCollection = await isInCollection(book.isbn, user.id);
+            const inCollection = await isInCollection(book.isbn, user.id);
 
-        return inCollection && matchesSearch;
-      }),
-    );
+            return inCollection && matchesSearch ? book : null;
+          }),
+        );
+
+        setFilteredBooks(filtered.filter((book) => book !== null) as Book[]);
+      } catch (error) {
+        console.error('Error filtering books:', error);
+        setError('Failed to filter books. Please try again.');
+      }
+    };
+
+    filterBooks();
   }, [books, searchQuery, user]);
 
   return (

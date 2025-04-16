@@ -11,12 +11,9 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
       viewBox="0 0 120 120"
       className={`${className}`}
     >
-      {/* Bookshelf base */}
       <rect x="20" y="90" width="80" height="6" fill="#4F46E5" rx="2" />
 
-      {/* Books - Static */}
       <g>
-        {/* Tall book */}
         <rect x="25" y="45" width="12" height="45" fill="#4F46E5" rx="1">
           <animate
             attributeName="height"
@@ -26,7 +23,6 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
           />
         </rect>
 
-        {/* Medium book */}
         <rect x="42" y="55" width="15" height="35" fill="#818CF8" rx="1">
           <animate
             attributeName="height"
@@ -37,7 +33,6 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
           />
         </rect>
 
-        {/* Short book */}
         <rect x="62" y="60" width="10" height="30" fill="#4F46E5" rx="1">
           <animate
             attributeName="height"
@@ -48,7 +43,6 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
           />
         </rect>
 
-        {/* Tall book 2 */}
         <rect x="77" y="40" width="13" height="50" fill="#818CF8" rx="1">
           <animate
             attributeName="height"
@@ -60,7 +54,6 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
         </rect>
       </g>
 
-      {/* Book spines detail lines */}
       <g stroke="#4F46E5" strokeWidth="0.5">
         <line x1="29" y1="50" x2="29" y2="85" />
         <line x1="49" y1="60" x2="49" y2="85" />
@@ -68,7 +61,6 @@ export function BookSpinner({ className = '' }: BookSpinnerProps) {
         <line x1="83" y1="45" x2="83" y2="85" />
       </g>
 
-      {/* Subtle background glow */}
       <rect
         x="15"
         y="35"

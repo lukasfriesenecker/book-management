@@ -59,13 +59,13 @@ export default function UserDialog({
     };
 
   const addOrUpdateUser = async () => {
-    if (!formData.username || !formData.role) {
+    if (
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword ||
+      !formData.role
+    ) {
       toast.error('Please fill in all required fields');
-      return;
-    }
-
-    if (!isEditMode && (!formData.password || !formData.confirmPassword)) {
-      toast.error('Please provide a password');
       return;
     }
 
@@ -91,11 +91,6 @@ export default function UserDialog({
       setIsDialogOpen(false);
     } catch (error) {
       console.error('Error saving user:', error);
-      toast.error(
-        isEditMode
-          ? 'Failed to update user. Please try again.'
-          : 'Failed to add user. Please try again.',
-      );
     }
   };
 
@@ -155,8 +150,8 @@ export default function UserDialog({
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USER">USER</SelectItem>
-                <SelectItem value="ADMIN">ADMIN</SelectItem>
+                <SelectItem value={UserRole.USER}>{UserRole.USER}</SelectItem>
+                <SelectItem value={UserRole.ADMIN}>{UserRole.ADMIN}</SelectItem>
               </SelectContent>
             </Select>
           </div>
