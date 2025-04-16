@@ -295,7 +295,7 @@ export default function BookReviewDialog({
                         {[1, 2, 3, 4, 5].map((star) => (
                           <StarIcon
                             key={star}
-                            className={`h-4 w-4 ${
+                            className={`size-4 ${
                               star <= review.rating
                                 ? 'fill-yellow-400 text-yellow-400'
                                 : 'text-gray-300'

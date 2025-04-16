@@ -8,32 +8,45 @@ import { toggleCollection } from '@/utils/toggleCollection';
 import { useUser } from '@/contexts/UserContext';
 import { useEffect, useState } from 'react';
 import { isInCollection } from '@/utils/isInCollection';
+import { toast } from 'sonner';
 
 interface BookCardProps {
   book: Book;
-  handleDelete: (isbn: string) => void;
   handleEdit: (book: Book) => void;
+  handleDelete: (isbn: string) => void;
 }
 
-export function BookCard({ book, handleDelete, handleEdit }: BookCardProps) {
+export function BookCard({ book, handleEdit, handleDelete }: BookCardProps) {
   const [inCollection, setInCollection] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchCollectionStatus = async () => {
-      setInCollection(await isInCollection(book.isbn, user?.id));
-    };
-    fetchCollectionStatus();
+    (async () => {
+      try {
+        setInCollection(await isInCollection(book.isbn, user.id));
+      } catch (error) {
+        console.error('Error fetching collection status:', error);
+      }
+    })();
   }, [book.isbn, user]);
 
   const handleCollect = async () => {
     if (!user) return;
 
-    const success = await toggleCollection(book.isbn, user.id);
-    if (success) {
-      setInCollection((prev) => !prev);
+    try {
+      const success = await toggleCollection(book.isbn, user.id);
+      if (success) {
+        setInCollection((prev) => !prev);
+        toast.success(
+          inCollection
+            ? 'Book removed from your collection!'
+            : 'Book added to your collection!',
+        );
+      }
+    } catch (error) {
+      console.error('Error toggling collection:', error);
     }
   };
 
@@ -66,7 +79,7 @@ export function BookCard({ book, handleDelete, handleEdit }: BookCardProps) {
                 onClick={() => handleEdit(book)}
                 className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               >
-                <Edit className="h-4 w-4" />
+                <Edit className="size-4" />
               </Button>
               <Button
                 variant="outline"
@@ -74,7 +87,7 @@ export function BookCard({ book, handleDelete, handleEdit }: BookCardProps) {
                 onClick={() => handleDelete(book.isbn)}
                 className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="size-4" />
               </Button>
             </div>
           </div>
@@ -89,7 +102,7 @@ export function BookCard({ book, handleDelete, handleEdit }: BookCardProps) {
           size="sm"
           onClick={handleCollect}
         >
-          <BookMarked className="mr-2 h-4 w-4" />
+          <BookMarked className="mr-2 size-4" />
           {inCollection ? 'Uncollect' : 'Collect'}
         </Button>
         <BookReviewDialog book={book} userId={1} />

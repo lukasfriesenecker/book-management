@@ -9,16 +9,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import DialogInput from '@/components/DialogInput';
-import { Book, Calendar, PersonStanding, Text } from 'lucide-react';
+import { BookOpen, Calendar, Text, User } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api';
-
-interface Book {
-  isbn: string;
-  title: string;
-  author: string;
-  year: number;
-}
+import { Book } from '@/constants/book';
 
 interface BookDialogProps {
   isEditMode: boolean;
@@ -53,23 +47,34 @@ export default function BookDialog({
     };
 
   const addOrUpdateBook = async () => {
-    /*if (!formData.username || !formData.role) {
+    if (
+      !formData.isbn ||
+      !formData.title ||
+      !formData.author ||
+      !formData.year
+    ) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    if (!isEditMode && (!formData.password || !formData.confirmPassword)) {
-      toast.error('Please provide a password');
+    if (formData.isbn.length < 13 || formData.isbn.length > 13) {
+      toast.error('ISBN must be at exactly 13 characters long');
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
+    if (formData.year < 0) {
+      toast.error('Year cannot be negative');
       return;
-    }*/
+    }
+
+    if (formData.year > new Date().getFullYear()) {
+      toast.error('Year cannot be in the future');
+      return;
+    }
 
     try {
       let response;
+
       if (isEditMode) {
         response = await api.put(`/books/${selectedBook?.isbn}`, {
           title: formData.title,
@@ -82,15 +87,10 @@ export default function BookDialog({
         toast.success('Book added successfully');
       }
 
-      onSave(response.data);
       setIsDialogOpen(false);
+      onSave(response.data);
     } catch (error) {
       console.error('Error saving book:', error);
-      toast.error(
-        isEditMode
-          ? 'Failed to update book. Please try again.'
-          : 'Failed to add book. Please try again.',
-      );
     }
   };
 
@@ -108,7 +108,7 @@ export default function BookDialog({
         <div className="grid gap-4 py-4">
           <DialogInput
             label="ISBN"
-            icon={<Book />}
+            icon={<BookOpen />}
             type="text"
             identifier="isbn"
             value={formData.isbn}
@@ -128,7 +128,7 @@ export default function BookDialog({
 
           <DialogInput
             label="Author"
-            icon={<PersonStanding />}
+            icon={<User />}
             type="text"
             identifier="author"
             value={formData.author}

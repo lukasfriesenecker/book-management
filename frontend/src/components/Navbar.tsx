@@ -47,7 +47,7 @@ export function Navbar() {
               <MenubarContent className="w-screen md:hidden">
                 <BurgerItem link={`/books`} icon={<BookOpen />} text="Books" />
                 <BurgerItem
-                  link={`/collection/1`}
+                  link={`/collection`}
                   icon={<Library />}
                   text="Library"
                 />
@@ -62,7 +62,7 @@ export function Navbar() {
             <NavbarItem link={`/books`} icon={<BookOpen />} text="Books" />
 
             <NavbarItem
-              link={`/collection/1`}
+              link={`/collection`}
               icon={<Library />}
               text="Collection"
             />

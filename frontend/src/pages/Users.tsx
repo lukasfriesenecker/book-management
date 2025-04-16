@@ -176,7 +176,7 @@ export default function UserList() {
                               className="size-8 cursor-pointer"
                               disabled={data.id === user?.id}
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="size-4" />
                               <span className="sr-only">Edit</span>
                             </Button>
                             <Button
@@ -186,7 +186,7 @@ export default function UserList() {
                               className="size-8 cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700"
                               disabled={data.id === user?.id}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="size-4" />
                               <span className="sr-only">Delete</span>
                             </Button>
                           </div>

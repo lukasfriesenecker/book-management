@@ -44,7 +44,7 @@ function App() {
           }
         />
         <Route
-          path="/collection/:userId"
+          path="/collection"
           element={
             <ProtectedRoute>
               <Collection />

@@ -1,53 +1,58 @@
-import { BookMarked, Edit, Trash2 } from 'lucide-react';
-import BookReviewDialog from './Bookreview';
+import { BookMarked } from 'lucide-react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Book } from '@/constants/book';
-import { toggleCollection } from '@/utils/toggleCollection';
 import { useUser } from '@/contexts/UserContext';
 import { useEffect, useState } from 'react';
 import { isInCollection } from '@/utils/isInCollection';
 import { toast } from 'sonner';
 import api from '@/api';
 import { Status } from '@/constants/status';
+import { getStatus } from '@/utils/getStatus';
 
-interface BookCardCollectionProps {
+interface CollectionBookCardProps {
   book: Book;
-  handleDelete?: (isbn: string) => void;
-  handleEdit?: (book: Book) => void;
   onRemove: () => void;
 }
 
-export function BookCardCollection({
+export function CollectionBookCard({
   book,
-  handleDelete,
-  handleEdit,
   onRemove,
-}: BookCardCollectionProps) {
+}: CollectionBookCardProps) {
   const [inCollection, setInCollection] = useState(false);
-  const [status, setStatus] = useState<string>();
+  const [status, setStatus] = useState<Status>();
   const { user } = useUser();
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchCollectionStatus = async () => {
-      setInCollection(await isInCollection(book.isbn, user?.id));
-    };
-    fetchCollectionStatus();
+    (async () => {
+      try {
+        setStatus(await getStatus(book.isbn, user.id));
+      } catch (error) {
+        console.error('Error fetching book status:', error);
+      }
+    })();
+
+    (async () => {
+      try {
+        setInCollection(await isInCollection(book.isbn, user.id));
+      } catch (error) {
+        console.error('Error fetching collection status:', error);
+      }
+    })();
   }, [book.isbn, user]);
 
-  const toggleReadStatus = async (isbn: string) => {
+  const toggleStatus = async (isbn: string) => {
     if (!user) return;
 
     try {
       const response = await api.put(`/books-users/${isbn}/${user.id}`);
       setStatus(response.data.status);
-      toast.success(`Book marked as STATUS!`);
+      toast.success(`Book marked as ${response.data.status}!`);
     } catch (error) {
-      console.error('Error updating read status:', error);
-      toast.error('Failed to update read status. Please try again.');
+      console.error('Error updating status:', error);
     }
   };
 
@@ -61,7 +66,6 @@ export function BookCardCollection({
       toast.success('Book removed from your collection!');
     } catch (error) {
       console.error('Error removing from collection:', error);
-      toast.error('Failed to remove book from collection. Please try again.');
     }
   };
 
@@ -77,10 +81,10 @@ export function BookCardCollection({
       <CardContent className="pt-6">
         <div className="absolute top-2 right-2 flex gap-1">
           <Badge
-            variant={status === 'read' ? 'default' : 'outline'}
-            className={status === 'read' ? 'bg-green-600' : ''}
+            variant={status === Status.READ ? 'default' : 'outline'}
+            className={status === Status.READ ? 'bg-green-600' : 'bg-white'}
           >
-            {status === Status.UNREAD ? 'Read' : 'Unread'}
+            {status}
           </Badge>
           <Badge variant="default" className="bg-indigo-600">
             In Collection
@@ -99,10 +103,10 @@ export function BookCardCollection({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => toggleReadStatus(book.isbn)}
+            onClick={() => toggleStatus(book.isbn)}
             className="border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
           >
-            Mark as {status}
+            Mark as {status === Status.READ ? Status.UNREAD : Status.READ}
           </Button>
         </div>
 
@@ -111,7 +115,7 @@ export function BookCardCollection({
           size="sm"
           onClick={() => removeFromCollection(book.isbn)}
         >
-          <BookMarked className="mr-2 h-4 w-4" />
+          <BookMarked className="mr-2 size-4" />
           Remove from Collection
         </Button>
       </CardContent>
