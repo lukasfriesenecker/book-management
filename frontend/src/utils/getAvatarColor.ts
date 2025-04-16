@@ -9,5 +9,6 @@ export function getAvatarColor(id: number): string {
     'bg-indigo-500',
     'bg-teal-500',
   ];
+
   return colors[id % colors.length];
 }

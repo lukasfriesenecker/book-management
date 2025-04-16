@@ -1,6 +1,6 @@
-import { getInitials } from '@/utils/initials';
+import { getInitials } from '@/utils/getInitials';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { getAvatarColor } from '@/utils/avatar';
+import { getAvatarColor } from '@/utils/getAvatarColor';
 import { StarIcon } from 'lucide-react';
 import { Review } from '@/constants/Review';
 

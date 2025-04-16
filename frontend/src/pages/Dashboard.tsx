@@ -1,67 +1,45 @@
-'use client';
-
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { BookOpen, BookMarked, CheckCircle2, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { BookOpen, BookMarked } from 'lucide-react';
 import { BookSpinner } from '@/components/Bookspinner';
-import { useNavigate } from 'react-router-dom';
 import api from '../api';
-
-interface Book {
-  isbn: string;
-  title: string;
-  author: string;
-  year: string;
-}
-
-interface BookUser {
-  userId: number;
-  isbn: string;
-  status: 'READ' | 'UNREAD';
-}
-
-interface Review {
-  isbn: string;
-  userId: number;
-  rating: number;
-  comment: string;
-}
+import { Book } from '@/constants/book';
+import { BookUser } from '@/constants/book-user';
+import { Review } from '@/constants/Review';
+import { useUser } from '@/contexts/UserContext';
+import { TopRatedCard } from '@/components/TopRatedCard';
+import { BookCountCard } from '@/components/BookCountCard';
+import { Status } from '@/constants/status';
+import { ProgressCard } from '@/components/ProgressCard';
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const userId = 1;
+  const [loading, setLoading] = useState(true);
+
   const [books, setBooks] = useState<Book[]>([]);
   const [bookUsers, setBookUsers] = useState<BookUser[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const { user } = useUser();
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!user) return;
+
+    (async () => {
       setLoading(true);
       const start = Date.now();
-      try {
-        const [booksRes, bookUsersRes] = await Promise.all([
-          api.get('/books'),
-          api.get(`/books-users/${userId}`),
-        ]);
 
+      try {
+        const booksRes = await api.get('/books');
         setBooks(booksRes.data);
+
+        const bookUsersRes = await api.get(`/books-users/${user.id}`);
         setBookUsers(bookUsersRes.data);
 
-        const reviewsPromises = bookUsersRes.data.map((bu: BookUser) =>
-          api.get(`/reviews/${bu.isbn}`),
-        );
-        const reviewsResults = await Promise.all(reviewsPromises);
-        const allReviews = reviewsResults.flatMap((res) => res.data);
-        setReviews(allReviews);
+        const reviewsRes = (
+          await Promise.all(
+            booksRes.data.map((book: Book) => api.get(`/reviews/${book.isbn}`)),
+          )
+        ).flatMap((res) => res.data);
+        setReviews(reviewsRes);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -74,18 +52,12 @@ export default function Dashboard() {
           setLoading(false);
         }
       }
-    };
+    })();
+  }, [user]);
 
-    fetchData();
-  }, [userId]);
-
-  const totalBooks = books.length;
-  const booksInCollection = bookUsers.length;
-  const readBooks = bookUsers.filter((bu) => bu.status === 'READ').length;
+  const readBooks = bookUsers.filter((bu) => bu.status === Status.READ).length;
   const readPercentage =
-    booksInCollection > 0
-      ? Math.round((readBooks / booksInCollection) * 100)
-      : 0;
+    bookUsers.length > 0 ? Math.round((readBooks / bookUsers.length) * 100) : 0;
 
   const bookRatings = books.map((book) => {
     const bookReviews = reviews.filter((review) => review.isbn === book.isbn);
@@ -130,133 +102,27 @@ export default function Dashboard() {
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Card>
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <p className="text-sm font-medium text-gray-500">Total Books</p>
-                <h3 className="text-2xl font-bold">{totalBooks}</h3>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
-                <BookOpen className="h-6 w-6 text-indigo-600" />
-              </div>
-            </CardContent>
-          </Card>
+          <BookCountCard
+            text="Total Books"
+            count={books.length}
+            icon={<BookOpen />}
+          />
 
-          <Card>
-            <CardContent className="flex items-center justify-between p-6">
-              <div>
-                <p className="text-sm font-medium text-gray-500">
-                  Books in Collection
-                </p>
-                <h3 className="text-2xl font-bold">{booksInCollection}</h3>
-              </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
-                <BookMarked className="h-6 w-6 text-indigo-600" />
-              </div>
-            </CardContent>
-          </Card>
+          <BookCountCard
+            text="Books in Collection"
+            count={bookUsers.length}
+            icon={<BookMarked />}
+          />
         </div>
 
         <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <CheckCircle2 className="mr-2 h-5 w-5 text-indigo-600" />
-                Reading Progress
-              </CardTitle>
-              <CardDescription>Your collection reading status</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <div className="mb-2 flex justify-between">
-                    <span className="text-sm font-medium">Read Books</span>
-                    <span className="text-sm font-medium">
-                      {readBooks} of {booksInCollection}
-                    </span>
-                  </div>
-                  <Progress
-                    value={readPercentage}
-                    className="h-2 bg-indigo-600"
-                  />
-                </div>
+          <ProgressCard
+            totalBooks={bookUsers.length}
+            readBooks={readBooks}
+            readPercentage={readPercentage}
+          />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <div className="text-3xl font-bold text-indigo-600">
-                      {readBooks}
-                    </div>
-                    <div className="text-sm text-gray-500">Read</div>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-4">
-                    <div className="text-3xl font-bold text-indigo-600">
-                      {booksInCollection - readBooks}
-                    </div>
-                    <div className="text-sm text-gray-500">Unread</div>
-                  </div>
-                </div>
-
-                <Button
-                  className="w-full bg-indigo-600 hover:bg-indigo-700"
-                  onClick={() => navigate(`/collection/${userId}`)}
-                >
-                  View Collection
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Star className="mr-2 h-5 w-5 text-indigo-600" />
-                Top Rated Books
-              </CardTitle>
-              <CardDescription>
-                Highest rated books in the library
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {topRatedBooks.length > 0 ? (
-                <div className="space-y-4">
-                  {topRatedBooks.map((book) => (
-                    <div
-                      key={book.isbn}
-                      className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
-                    >
-                      <div className="flex-1">
-                        <h4 className="font-medium">{book.title}</h4>
-                        <p className="text-sm text-gray-500">
-                          {book.author}, {book.year}
-                        </p>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="mr-2 flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`size-4 ${
-                                star <= Math.round(book.avgRating)
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm font-medium">
-                          {book.avgRating.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-8 text-center text-gray-500">
-                  No rated books yet. Start rating books to see them here!
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <TopRatedCard topRatedBooks={topRatedBooks} />
         </div>
       </div>
     </div>

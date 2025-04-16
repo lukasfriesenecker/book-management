@@ -19,8 +19,8 @@ import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
 import { BurgerItem } from './BurgerItem';
 import { UserRole } from '@/constants/roles';
-import { getInitials } from '@/utils/initials';
-import { getAvatarColor } from '@/utils/avatar';
+import { getInitials } from '@/utils/getInitials';
+import { getAvatarColor } from '@/utils/getAvatarColor';
 
 export function Navbar() {
   const { user, logout } = useUser();
