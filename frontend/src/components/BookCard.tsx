@@ -11,11 +11,11 @@ import { isInCollection } from '@/utils/isInCollection';
 
 interface BookCardProps {
   book: Book;
-  onDelete: (isbn: string) => void;
-  onEdit: (book: Book) => void;
+  handleDelete: (isbn: string) => void;
+  handleEdit: (book: Book) => void;
 }
 
-export function BookCard({ book, onDelete, onEdit }: BookCardProps) {
+export function BookCard({ book, handleDelete, handleEdit }: BookCardProps) {
   const [inCollection, setInCollection] = useState(false);
   const { user } = useUser();
 
@@ -28,7 +28,7 @@ export function BookCard({ book, onDelete, onEdit }: BookCardProps) {
     fetchCollectionStatus();
   }, [book.isbn, user]);
 
-  const handleToggleCollection = async () => {
+  const handleCollect = async () => {
     if (!user) return;
 
     const success = await toggleCollection(book.isbn, user.id);
@@ -63,7 +63,7 @@ export function BookCard({ book, onDelete, onEdit }: BookCardProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onEdit(book)}
+                onClick={() => handleEdit(book)}
                 className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               >
                 <Edit className="h-4 w-4" />
@@ -71,7 +71,7 @@ export function BookCard({ book, onDelete, onEdit }: BookCardProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onDelete(book.isbn)}
+                onClick={() => handleDelete(book.isbn)}
                 className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
@@ -87,7 +87,7 @@ export function BookCard({ book, onDelete, onEdit }: BookCardProps) {
               : 'bg-blue-600 hover:bg-blue-700'
           }`}
           size="sm"
-          onClick={handleToggleCollection}
+          onClick={handleCollect}
         >
           <BookMarked className="mr-2 h-4 w-4" />
           {inCollection ? 'Uncollect' : 'Collect'}

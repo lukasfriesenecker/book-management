@@ -1,18 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { BookMarked } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api';
 import { Header } from '@/components/Header';
-
-interface Book {
-  isbn: string;
-  title: string;
-  author: string;
-  year: string;
-}
+import { useUser } from '@/contexts/UserContext';
+import { BookCard } from '@/components/BookCard';
+import { Book } from '@/constants/book';
+import { BookCardCollection } from '@/components/BookCardCollection';
 
 interface BookUser {
   userId: number;
@@ -21,22 +14,18 @@ interface BookUser {
 }
 
 export default function MyCollection() {
-  const userId = 1;
   const [books, setBooks] = useState<Book[]>([]);
   const [error, setError] = useState('');
   const [bookUsers, setBookUsers] = useState<BookUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const { user } = useUser();
+
   useEffect(() => {
-    fetchData();
+    fetchBooks();
+    fetchBookUsers();
   }, []);
 
-  const fetchData = async () => {
-    await fetchBooks();
-    await fetchBookUsers();
-  };
-
-  // Fetch Books from API
   const fetchBooks = async () => {
     try {
       const response = await api.get('/books');
@@ -49,10 +38,9 @@ export default function MyCollection() {
     }
   };
 
-  // Fetch user's book collection
   const fetchBookUsers = async () => {
     try {
-      const response = await api.get(`/books-users/${userId}`);
+      const response = await api.get(`/books-users/${user?.id}`);
       if (response.status === 200) {
         setBookUsers(response.data);
       }
@@ -62,12 +50,10 @@ export default function MyCollection() {
     }
   };
 
-  // Check if a book is in the user's collection
   const isInCollection = (isbn: string): boolean => {
     return bookUsers.some((bu) => bu.isbn === isbn);
   };
 
-  // Get the read status of a book from bookUsers
   const getBookStatus = (isbn: string): 'read' | 'unread' => {
     const bookUser = bookUsers.find((bu) => bu.isbn === isbn);
     return bookUser
@@ -75,7 +61,6 @@ export default function MyCollection() {
       : 'unread';
   };
 
-  // Filter books based on search query and only show collection books
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
       book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -84,50 +69,6 @@ export default function MyCollection() {
 
     return isInCollection(book.isbn) && matchesSearch;
   });
-
-  // Toggle read status
-  const toggleReadStatus = async (isbn: string) => {
-    setError('');
-
-    const currentStatus = getBookStatus(isbn);
-    const newStatus = currentStatus === 'read' ? 'unread' : 'read';
-
-    try {
-      // Update the user-book relationship
-      await api.put(`/books-users/${isbn}/${userId}`, {
-        status: newStatus,
-      });
-
-      toast.success(`Book marked as ${newStatus}!`);
-
-      // Update local state
-      setBookUsers(
-        bookUsers.map((bu) =>
-          bu.isbn === isbn ? { ...bu, status: newStatus } : bu,
-        ),
-      );
-    } catch (error) {
-      console.error('Error updating read status:', error);
-      toast.error('Failed to update read status. Please try again.');
-    }
-  };
-
-  // Remove from collection
-  const removeFromCollection = async (isbn: string) => {
-    setError('');
-
-    try {
-      // Remove from collection
-      await api.delete(`/books-users/${isbn}/${userId}`);
-      toast.success('Book removed from your collection!');
-
-      // Update local state by removing the book from bookUsers
-      setBookUsers(bookUsers.filter((bu) => bu.isbn !== isbn));
-    } catch (error) {
-      console.error('Error removing from collection:', error);
-      toast.error('Failed to remove book from collection. Please try again.');
-    }
-  };
 
   return (
     <div>
@@ -154,6 +95,20 @@ export default function MyCollection() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredBooks.map((book) => (
+              <BookCardCollection
+                key={book.isbn}
+                book={book}
+                onRemove={() => {
+                  setBookUsers((prev) =>
+                    prev.filter((bu) => bu.isbn !== book.isbn),
+                  );
+                }}
+              />
+            ))}
+          </div>
+
+          /*<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredBooks.map((book) => {
               const status = getBookStatus(book.isbn);
 
@@ -189,7 +144,9 @@ export default function MyCollection() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleReadStatus(book.isbn)}
+                        onClick={() =>
+                          toggleReadStatus(book.isbn, user?.id || -1)
+                        }
                         className="border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       >
                         {status === 'read' ? 'Mark Unread' : 'Mark as Read'}
@@ -208,7 +165,7 @@ export default function MyCollection() {
                 </Card>
               );
             })}
-          </div>
+          </div>*/
         )}
       </div>
     </div>

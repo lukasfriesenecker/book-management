@@ -3,10 +3,8 @@ import { toast } from 'sonner';
 import api from '../api';
 import BookDialog from '@/components/BookDialog';
 import { Book } from '@/constants/book';
-import { BookGrid } from '@/components/BookGrid';
 import { Header } from '@/components/Header';
-import { toggleCollection } from '@/utils/toggleCollection';
-import { useUser } from '@/contexts/UserContext';
+import { BookCard } from '@/components/BookCard';
 
 export default function AllBooks() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -21,8 +19,6 @@ export default function AllBooks() {
     author: '',
     year: 2000,
   });
-
-  const { user } = useUser();
 
   useEffect(() => {
     fetchBooks();
@@ -108,13 +104,16 @@ export default function AllBooks() {
             </p>
           </div>
         ) : (
-          <BookGrid
-            books={filteredBooks}
-            onToggleCollection={toggleCollection}
-            onDelete={deleteBook}
-            onEdit={openEditDialog}
-            userId={user?.id || -1}
-          />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredBooks.map((book) => (
+              <BookCard
+                key={book.isbn}
+                book={book}
+                handleDelete={deleteBook}
+                handleEdit={openEditDialog}
+              />
+            ))}
+          </div>
         )}
 
         <BookDialog
