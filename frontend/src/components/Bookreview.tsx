@@ -14,13 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StarIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api';
-
-interface Book {
-  isbn: string;
-  title: string;
-  author: string;
-  year: string;
-}
+import { Book } from '@/constants/book';
 
 interface Review {
   isbn: string;

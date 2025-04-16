@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, BookMarked } from 'lucide-react';
+import { BookMarked } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../api';
 import { Header } from '@/components/Header';
