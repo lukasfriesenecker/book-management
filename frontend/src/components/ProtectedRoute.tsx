@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import { JSX } from 'react';
 
@@ -7,17 +7,19 @@ interface ProtectedRouteProps {
   requiredRole?: string;
 }
 
-export function ProtectedRoute({
-  children,
-  requiredRole,
-}: ProtectedRouteProps) {
-  const { user } = useUser();
+export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+  const { user, loading } = useUser();
+  const location = useLocation();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    return <div>Lade Benutzerdaten...</div>; // oder Spinner
   }
 
-  if (requiredRole && user.role !== requiredRole) {
+  if (!user) {
+    return <Navigate to="/unauthorized" replace state={{ from: location }} />;
+  }
+
+  if (requiredRole && !user.roles.includes(requiredRole)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

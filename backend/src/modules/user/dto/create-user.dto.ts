@@ -8,8 +8,11 @@ export class CreateUserDto {
   @ApiProperty({ example: 'maxmustermann' })
   username: string;
 
-  @ApiProperty({ example: 'password' })
-  password: string;
+  @ApiProperty({ example: 'test@gmx.at' })
+  email: string;
+
+  @ApiProperty({ example: 'password', required: false})
+  password?: string;
 
   @ApiProperty({ example: Role.USER, required: false })
   role?: Role;

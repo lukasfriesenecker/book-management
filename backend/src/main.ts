@@ -1,17 +1,19 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RolesGuard } from './common/guards/roles.guard';
-import { AuthMiddleware } from './common/middleware/auth.middleware';
+import * as cookieParser from 'cookie-parser';
+import { JwtAuthGuard } from './common/guards/auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-
-  app.use(new AuthMiddleware().use);
-  app.useGlobalGuards(new RolesGuard(new Reflector()));
 
   app.setGlobalPrefix(process.env.BACKEND_BASE_URL ?? 'api');
+
+  app.use(cookieParser());
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true                  
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Book Management')

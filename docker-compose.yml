@@ -1,4 +1,23 @@
 services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: ["start-dev","--import-realm", "--hostname-strict=false"]                     
+    environment:
+      - KC_HOSTNAME=localhost
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_IMPORT=/opt/keycloak/data/import/keycloak-realm.json
+    volumes:
+      - ./keycloak-realm.json:/opt/keycloak/data/import/keycloak-realm.json      
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: cat /proc/net/tcp | grep '00000000:1F90 00000000:0000' || exit 1
+      interval: 15s
+      timeout: 2s
+      retries: 15  
   db:
     container_name: postgres
     image: postgres
@@ -32,6 +51,7 @@ services:
       - "${BACKEND_PORT}:3000"
     depends_on:
       - db
+      - keycloak
 
   frontend:
     container_name: frontend

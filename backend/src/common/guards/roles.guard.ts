@@ -1,23 +1,18 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLE_KEY } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/modules/user/user.entity';
-
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
-
   canActivate(context: ExecutionContext): boolean {
-    const requiredRole = this.reflector.get<Role>(
-      ROLE_KEY,
-      context.getHandler(),
-    );
-
-    if (!requiredRole) {
-      return true;
-    }
-
-    const { user } = context.switchToHttp().getRequest();
-    return user.role === requiredRole;
+    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+    if (!requiredRoles) return true; // kein @Roles Decorator -> keine Rollen-Einschränkung
+    const req = context.switchToHttp().getRequest<Request>();
+    const user: any = (req as any).user;
+    console.error(user);
+    if (!user) return false;
+    const userRoles: string[] = user.realm_access?.roles || []; 
+    const hasAllRoles = requiredRoles.every(role => userRoles.includes(role));
+    if (!hasAllRoles) throw new ForbiddenException('Insufficient roles');
+    return true;
   }
 }

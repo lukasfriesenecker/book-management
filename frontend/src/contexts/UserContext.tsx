@@ -1,42 +1,45 @@
-import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { fetchMe, login } from '../utils/auth';
 
 interface User {
   id: number;
+  email: string;
   username: string;
-  role: string;
+  roles: string[];
 }
 
-interface UserContextType {
+const UserContext = createContext<{
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  logout: () => void;
-}
+  loading: boolean;
+  setUser: (u: User | null) => void;
+}>({
+  user: null,
+  loading: true,
+  setUser: () => {},
+});
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-  const logout = () => {
-    setUser(null);
-    navigate('/login');
-  };
+  useEffect(() => {
+    fetchMe()
+      .then((data: React.SetStateAction<User | null>) => {
+        if (!data) {
+          login();
+        } else {
+          setUser(data);
+        }
+      })
+      .catch(() => login())
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, loading, setUser }}>
       {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
+export const useUser = () => useContext(UserContext);

@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Books from './pages/Books';
 import Collection from './pages/Collection';
 import Users from './pages/Users';
@@ -24,7 +24,7 @@ function App() {
       {!shouldHideNavbar && <Navbar />}
       <Toaster />
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route

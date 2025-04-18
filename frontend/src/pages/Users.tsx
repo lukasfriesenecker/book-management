@@ -26,6 +26,7 @@ interface User {
   id: number;
   username: string;
   password: string;
+  email: string;
   role: UserRole;
 }
 
@@ -44,6 +45,7 @@ export default function UserList() {
     username: '',
     password: '',
     confirmPassword: '',
+    email: '',
     role: UserRole.USER,
   });
 
@@ -76,6 +78,7 @@ export default function UserList() {
       username: '',
       password: '',
       confirmPassword: '',
+      email: '',
       role: UserRole.USER,
     });
     setIsEditMode(false);
@@ -87,6 +90,7 @@ export default function UserList() {
       id: user.id,
       username: user.username,
       password: user.password,
+      email: user.email,
       confirmPassword: user.password,
       role: user.role,
     });

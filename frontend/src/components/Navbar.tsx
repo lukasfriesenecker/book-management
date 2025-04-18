@@ -19,11 +19,12 @@ import { NavbarItem } from './NavbarItem';
 import { useUser } from '@/contexts/UserContext';
 import { BurgerItem } from './BurgerItem';
 import { UserRole } from '@/constants/roles';
+import { logout } from '@/utils/auth';
 import { getInitials } from '@/utils/getInitials';
 import { getAvatarColor } from '@/utils/getAvatarColor';
 
 export function Navbar() {
-  const { user, logout } = useUser();
+  const { user } = useUser();
 
   return (
     <div className="border-b">
@@ -51,7 +52,7 @@ export function Navbar() {
                   icon={<Library />}
                   text="Library"
                 />
-                {user?.role === UserRole.ADMIN && (
+                {user?.roles.includes(UserRole.ADMIN) && (
                   <BurgerItem link={`/users`} icon={<Users />} text="Users" />
                 )}
               </MenubarContent>
@@ -67,7 +68,7 @@ export function Navbar() {
               text="Collection"
             />
 
-            {user?.role === UserRole.ADMIN && (
+            {user?.roles.includes(UserRole.ADMIN) && (
               <NavbarItem link={`/users`} icon={<Users />} text="Users" />
             )}
           </nav>
@@ -78,7 +79,7 @@ export function Navbar() {
             <div className="flex cursor-pointer items-center gap-2">
               <div className="flex flex-col text-right">
                 <p className="text-sm font-bold uppercase">{user?.username}</p>
-                <p className="text-xs">{user?.role}</p>
+                <p className="text-xs">{user?.roles?.includes('ADMIN') ? UserRole.ADMIN : UserRole.USER}</p>
               </div>
               {
                 <Avatar className="size-10">

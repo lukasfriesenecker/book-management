@@ -20,7 +20,6 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
-  @RequiredRole(Role.ADMIN)
   @ApiBearerAuth()
   @ApiResponse({
     status: 400,
@@ -61,8 +60,6 @@ export class BookController {
   }
 
   @Put(':isbn')
-  @RequiredRole(Role.ADMIN)
-  @ApiBearerAuth()
   @ApiResponse({
     status: 404,
     description: 'Book not found',
@@ -75,6 +72,8 @@ export class BookController {
     status: 200,
     description: 'Updated',
   })
+  
+  @RequiredRole(Role.ADMIN)
   async update(
     @Param('isbn') isbn: string,
     @Body() updateBookDto: UpdateBookDto,
@@ -83,9 +82,8 @@ export class BookController {
   }
 
   @Delete(':isbn')
-  @RequiredRole(Role.ADMIN)
   @HttpCode(204)
-  @ApiBearerAuth()
+  @RequiredRole(Role.ADMIN)
   @ApiResponse({
     status: 404,
     description: 'Book not found',

@@ -12,12 +12,15 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RequiredRole } from 'src/common/decorators/roles.decorator';
+import { Role } from './user.entity';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @RequiredRole(Role.ADMIN)
   @ApiResponse({
     status: 201,
     description: 'Created',
@@ -31,6 +34,7 @@ export class UserController {
   }
 
   @Get()
+  @RequiredRole(Role.ADMIN)
   @ApiResponse({
     status: 200,
     description: 'Data retrieved successfully',
@@ -50,6 +54,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @RequiredRole(Role.ADMIN)
   @ApiResponse({
     status: 404,
     description: 'User not found',
@@ -63,6 +68,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @RequiredRole(Role.ADMIN)
   @HttpCode(204)
   @ApiResponse({
     status: 204,

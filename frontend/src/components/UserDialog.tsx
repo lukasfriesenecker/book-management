@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import DialogInput from '@/components/DialogInput';
-import { Lock, User } from 'lucide-react';
+import { Lock, Mail, User } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/api';
 import { UserRole } from '@/constants/roles';
@@ -25,6 +25,7 @@ import { UserRole } from '@/constants/roles';
 interface Credentials {
   id: number;
   username: string;
+  email: string;
   password: string;
   confirmPassword: string;
   role: UserRole;
@@ -59,13 +60,21 @@ export default function UserDialog({
     };
 
   const addOrUpdateUser = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (
       !formData.username ||
       !formData.password ||
       !formData.confirmPassword ||
+      (!isEditMode && !formData.email) ||
       !formData.role
     ) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (!isEditMode && !emailRegex.test(formData.email)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
@@ -115,6 +124,18 @@ export default function UserDialog({
             onChange={handleInputChange('username')}
             disabled={loading || isEditMode}
           />
+        
+        {!isEditMode && (
+          <DialogInput
+              label="Email"
+              icon={<Mail />}
+              type="email"
+              identifier="email"
+              value={(formData as any).email || ''}
+             onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value })) }
+              disabled={loading}
+          />
+        )}
 
           <DialogInput
             label="Password"

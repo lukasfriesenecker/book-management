@@ -11,8 +11,13 @@ import { BookUser } from './modules/book-user/book-user.entity';
 import { BookUserModule } from './modules/book-user/book-user.module';
 import { ReviewModule } from './modules/review/review.module';
 import { Review } from './modules/review/review.entity';
-import { APP_GUARD } from '@nestjs/core';
+
+import { AuthController } from './modules/auth/auth.controller';
+import { AuthService } from './modules/auth/auth.service';
+import { JwtAuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -32,9 +37,14 @@ import { RolesGuard } from './common/guards/roles.guard';
     BookUserModule,
     ReviewModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [
     AppService,
+    AuthService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
