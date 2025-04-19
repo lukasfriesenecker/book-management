@@ -15,8 +15,8 @@ export class AuthController {
   @Get('login')
   @Public()
   login(@Res() res: Response) {
-    const authUrl = `http://localhost:8080/realms/BookManagement/protocol/openid-connect/auth` +
-      `?response_type=code&client_id=bookmanagement-app&redirect_uri=${encodeURIComponent('http://localhost:3000/api/auth/callback')}` +
+    const authUrl = `http://localhost:8080/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/auth` +
+      `?response_type=code&client_id=${process.env.KEYCLOAK_CLIENT}&redirect_uri=${encodeURIComponent(`http://localhost:${process.env.BACKEND_PORT}/api/auth/callback`)}` +
       `&scope=openid profile email`;
     return res.redirect(authUrl);
   }
@@ -106,13 +106,10 @@ export class AuthController {
 
      //Kill keycloak session
      const idToken = req.cookies['id_token'];
-     if(idToken) {
-       const logoutUrl = 'http://localhost:8080/realms/BookManagement/protocol/openid-connect/logout' +
-         `?post_logout_redirect_uri=${encodeURIComponent('http://localhost:5173/')}` +
-         `&id_token_hint=${idToken}`;
-       return res.redirect(logoutUrl);
-    }
-
-    return res.redirect('http://localhost:5173/');
+     
+    const logoutUrl = `http://localhost:8080/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/logout` +
+      `?post_logout_redirect_uri=${encodeURIComponent('http://localhost:5173/')}` +
+      `&id_token_hint=${idToken}`;
+    return res.redirect(logoutUrl);
   }
 }

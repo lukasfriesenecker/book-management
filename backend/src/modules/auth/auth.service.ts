@@ -3,9 +3,9 @@ import axios from 'axios';
 
 @Injectable()
 export class AuthService {
-  private KEYCLOAK_BASE_URL = 'http://keycloak:8080/realms/BookManagement/protocol/openid-connect';
-  private CLIENT_ID = 'bookmanagement-app';
-  private CLIENT_SECRET = 'GdV0g2pajU2nD2AITZiXwyw2jtk1NeUf';  
+  private KEYCLOAK_BASE_URL = `http://keycloak:8080/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect`;
+  private CLIENT_ID = process.env.KEYCLOAK_CLIENT ?? 'bookmanagement-app';
+  private CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET ?? '****';  
   private REDIRECT_URI = 'http://localhost:3000/api/auth/callback';
 
   async exchangeCodeForToken(code: string) {

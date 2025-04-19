@@ -18,14 +18,14 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {this.kcAdminClient = new KcAdminClient({
     baseUrl: 'http://keycloak:8080',
-    realmName: 'BookManagement',
+    realmName: process.env.KEYCLOAK_REALM,
     });
   }
   
   private async authenticateAdmin() {
     await this.kcAdminClient.auth({
-      username: 'admin',
-      password: 'admin',
+      username: process.env.KEYCLOAK_ADMIN,
+      password: process.env.KEYCLOAK_ADMIN_PASSWORD,
       grantType: 'password',
       clientId: 'admin-cli',
     });
@@ -117,7 +117,7 @@ export class UserService {
     const keycloakUsers = await this.kcAdminClient.users.find({ email: user.email });
 
     if (keycloakUsers.length === 0) {
-      console.warn(`[UserService] Kein Keycloak-Benutzer mit E-Mail ${user.email} gefunden`);
+      console.warn(`[UserService] No Keycloak-User with E-Mail ${user.email} found`);
     } else {
       const keycloakId = keycloakUsers[0].id;
       if (typeof keycloakId === 'string') {

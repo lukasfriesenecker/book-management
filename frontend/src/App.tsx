@@ -2,8 +2,6 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Books from './pages/Books';
 import Collection from './pages/Collection';
 import Users from './pages/Users';
-import LogIn from './pages/LogIn';
-import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 import { Toaster } from 'sonner';
 import { Navbar } from './components/Navbar';
@@ -16,7 +14,7 @@ import { UserRole } from './constants/roles';
 function App() {
   const location = useLocation();
 
-  const hideNavbarRoutes = ['/login', '/signup', '/notfound', '/unauthorized'];
+  const hideNavbarRoutes = ['/notfound', '/unauthorized'];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -25,8 +23,6 @@ function App() {
       <Toaster />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/login" element={<LogIn />} />
-        <Route path="/signup" element={<SignUp />} />
         <Route
           path="/dashboard"
           element={
