@@ -41,7 +41,7 @@ export function ProgressCard({
                 {readBooks} of {totalBooks}
               </span>
             </div>
-            <Progress value={readPercentage} className="h-2 bg-indigo-600" />
+            <Progress value={readPercentage} className="h-2 bg-gray-50" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
