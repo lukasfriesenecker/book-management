@@ -23,7 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 
 interface User {
-  id: number;
+  id: string;
   username: string;
   password: string;
   email: string;
@@ -41,7 +41,7 @@ export default function UserList() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedUser, setSelectedUser] = useState({
-    id: -1,
+    id: '',
     username: '',
     password: '',
     confirmPassword: '',
@@ -74,7 +74,7 @@ export default function UserList() {
 
   function openAddDialog() {
     setSelectedUser({
-      id: -1,
+      id: '',
       username: '',
       password: '',
       confirmPassword: '',
@@ -98,7 +98,7 @@ export default function UserList() {
     setIsDialogOpen(true);
   }
 
-  const deleteUser = async (id: number) => {
+  const deleteUser = async (id: string) => {
     try {
       await api.delete(`/users/${id}`);
 
@@ -159,7 +159,7 @@ export default function UserList() {
                       <TableRow key={data.id}>
                         <TableCell className="pl-8">
                           <Avatar>
-                            <AvatarFallback className={getAvatarColor(data.id)}>
+                            <AvatarFallback className={getAvatarColor(0)}>
                               {getInitials(data.username)}
                             </AvatarFallback>
                           </Avatar>

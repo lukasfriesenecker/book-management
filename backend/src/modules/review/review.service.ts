@@ -40,7 +40,7 @@ export class ReviewService {
 
   async update(
     isbn: string,
-    userId: number,
+    userId: string,
     updateReveiewDto: UpdateReviewDto,
   ): Promise<Review | null> {
     const review = await this.reviewRepository.findOne({
@@ -64,7 +64,7 @@ export class ReviewService {
     });
   }
 
-  async delete(isbn: string, userId: number): Promise<void> {
+  async delete(isbn: string, userId: string): Promise<void> {
     const review = await this.reviewRepository.findOne({
       where: { isbn: isbn, userId: userId },
     });

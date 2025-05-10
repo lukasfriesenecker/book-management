@@ -27,7 +27,7 @@ export class BookUserController {
     status: 409,
     description: 'BookUser already exists',
   })
-  async create(@Param('isbn') isbn: string, @Param('userId') userId: number) {
+  async create(@Param('isbn') isbn: string, @Param('userId') userId: string) {
     return this.bookUserService.create(isbn, userId);
   }
 
@@ -36,7 +36,7 @@ export class BookUserController {
     status: 200,
     description: 'Data retrieved successfully',
   })
-  async findAllPerUser(@Param('userId') userId: number) {
+  async findAllPerUser(@Param('userId') userId: string) {
     return this.bookUserService.findAllPerUser(userId);
   }
 
@@ -51,7 +51,7 @@ export class BookUserController {
   })
   async toggleStatus(
     @Param('isbn') isbn: string,
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
   ) {
     return this.bookUserService.toggleStatus(isbn, userId);
   }
@@ -66,7 +66,7 @@ export class BookUserController {
     status: 404,
     description: 'BookUser not found',
   })
-  async delete(@Param('isbn') isbn: string, @Param('userId') userId: number) {
+  async delete(@Param('isbn') isbn: string, @Param('userId') userId: string) {
     return this.bookUserService.delete(isbn, userId);
   }
 }

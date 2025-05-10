@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { isInCollection } from '@/utils/isInCollection';
 import { toast } from 'sonner';
 import ReviewDialog from './ReviewDialog';
+import { UserRole } from '@/constants/roles';
 
 interface BookCardProps {
   book: Book;
@@ -19,6 +20,7 @@ interface BookCardProps {
 export function BookCard({ book, handleEdit, handleDelete }: BookCardProps) {
   const [inCollection, setInCollection] = useState(false);
   const { user } = useUser();
+  const isAdmin = user?.roles.includes(UserRole.ADMIN);
 
   useEffect(() => {
     if (!user) return;
@@ -77,6 +79,7 @@ export function BookCard({ book, handleEdit, handleDelete }: BookCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => handleEdit(book)}
+                disabled={!isAdmin}
                 className="rounded-r-none border-r-0 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               >
                 <Edit className="size-4" />
@@ -85,6 +88,7 @@ export function BookCard({ book, handleEdit, handleDelete }: BookCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => handleDelete(book.isbn)}
+                disabled={!isAdmin}
                 className="rounded-l-none border-gray-200 text-red-600 hover:bg-red-50 hover:text-red-700"
               >
                 <Trash2 className="size-4" />

@@ -9,7 +9,7 @@ export function ReviewEntry({ review }: { review: Review }) {
     <div key={`${review.isbn}-${review.userId}`} className="border-b pb-4">
       <div className="mb-2 flex items-center gap-2">
         <Avatar className="size-8">
-          <AvatarFallback className={getAvatarColor(review.userId)}>
+          <AvatarFallback className={getAvatarColor(0)}>
             {getInitials(review.username)}
           </AvatarFallback>
         </Avatar>

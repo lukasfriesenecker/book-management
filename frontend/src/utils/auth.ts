@@ -4,7 +4,7 @@ export const login = () => {
   window.location.href = `${API_BASE}/auth/login`;
 };
 
-export const logout = () => {
+export const logout = async () => {
   window.location.href = `${API_BASE}/auth/logout`;
 };
 

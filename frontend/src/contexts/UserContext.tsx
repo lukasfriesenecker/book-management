@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { fetchMe, login } from '../utils/auth';
 
 interface User {
-  id: number;
+  id: string;
   email: string;
   username: string;
   roles: string[];

@@ -23,7 +23,7 @@ import api from '@/api';
 import { UserRole } from '@/constants/roles';
 
 interface Credentials {
-  id: number;
+  id: string;
   username: string;
   email: string;
   password: string;

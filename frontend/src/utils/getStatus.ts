@@ -1,6 +1,6 @@
 import api from '@/api';
 
-export async function getStatus(isbn: string, userId: number) {
+export async function getStatus(isbn: string, userId: string) {
   try {
     const response = await api.get(`/books-users/${userId}`);
     const book = response.data.find(

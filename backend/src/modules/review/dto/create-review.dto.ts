@@ -5,7 +5,7 @@ export class CreateReviewDto {
   isbn: string;
 
   @ApiProperty({ example: 1 })
-  userId: number;
+  userId: string;
 
   @ApiProperty({ example: 4 })
   rating: number;

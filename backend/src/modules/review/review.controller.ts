@@ -54,7 +54,7 @@ export class ReviewController {
   })
   async update(
     @Param('isbn') isbn: string,
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
     return this.reviewService.update(isbn, userId, updateReviewDto);
@@ -70,7 +70,7 @@ export class ReviewController {
     status: 404,
     description: 'Review not found',
   })
-  async delete(@Param('isbn') isbn: string, @Param('userId') userId: number) {
+  async delete(@Param('isbn') isbn: string, @Param('userId') userId: string) {
     return this.reviewService.delete(isbn, userId);
   }
 }

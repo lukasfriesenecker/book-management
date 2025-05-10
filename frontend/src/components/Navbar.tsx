@@ -83,7 +83,7 @@ export function Navbar() {
               </div>
               {
                 <Avatar className="size-10">
-                  <AvatarFallback className={getAvatarColor(user?.id || 0)}>
+                  <AvatarFallback className={getAvatarColor(user?.id?.length ?? 0)}>
                     {getInitials(user?.username || '')}
                   </AvatarFallback>
                 </Avatar>

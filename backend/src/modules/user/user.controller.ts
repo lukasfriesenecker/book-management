@@ -49,7 +49,7 @@ export class UserController {
     status: 200,
     description: 'Data retrieved successfully',
   })
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
@@ -63,7 +63,7 @@ export class UserController {
     status: 200,
     description: 'Updated',
   })
-  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
@@ -78,7 +78,7 @@ export class UserController {
     status: 404,
     description: 'User not found',
   })
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     return this.userService.delete(id);
   }
 }

@@ -13,15 +13,11 @@ export class BookUser {
   isbn: string;
 
   @PrimaryColumn()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => Book, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'isbn' })
   book: Book;
-
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
-  user: User;
 
   @Column({ type: 'enum', enum: Status, default: Status.UNREAD })
   status: Status;

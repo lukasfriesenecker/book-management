@@ -31,12 +31,6 @@ export class AuthController {
       const decoded = jwt.decode(access_token) as any;
       const roles: string[] = decoded?.realm_access?.roles ?? [];
 
-    await this.userService.createIfNotExists({
-        email: decoded.email,
-        username: decoded.preferred_username,
-        role: roles.includes('ADMIN') ? Role.ADMIN : Role.USER
-    });
-
     res.cookie('access_token', access_token, {
         httpOnly: true, sameSite: 'lax',  
     });
@@ -57,16 +51,10 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: Request) {
     const user: any = req['user'];
-    const userFromDb = await this.userService.findByEmail(user.email);
-
-    if (!userFromDb) {
-        throw new UnauthorizedException(`User with Email ${user.email} not existing`);
-    }
-
     return {
-      id: userFromDb.id,
-      username: userFromDb.username,
-      email: userFromDb.email,
+      id: user.sub,
+      username: user.preferred_username,
+      email: user.email,
       roles: user.realm_access?.roles || []
     };
   }
@@ -97,12 +85,13 @@ export class AuthController {
     }
   }
 
+  @Public()
   @Get('logout')
   logout(@Res() res: Response, @Req() req: Request) {
 
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
-     res.clearCookie('id_token');
+    res.clearCookie('id_token');
 
      //Kill keycloak session
      const idToken = req.cookies['id_token'];

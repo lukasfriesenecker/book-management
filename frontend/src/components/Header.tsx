@@ -1,6 +1,8 @@
 import { Plus, Search } from 'lucide-react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
+import { useUser } from '@/contexts/UserContext';
+import { UserRole } from '@/constants/roles';
 
 interface HeaderProps {
   headline: string;
@@ -19,6 +21,8 @@ export function Header({
   buttonText,
   handleClick,
 }: HeaderProps) {
+  const { user } = useUser();
+  const isAdmin = user?.roles.includes(UserRole.ADMIN);
   return (
     <header className="mt-6 mb-4 flex flex-col items-center justify-between gap-4 md:flex-row">
       <h1 className="text-2xl font-bold">{headline}</h1>
@@ -40,6 +44,7 @@ export function Header({
           <Button
             className="bg-indigo-600 hover:bg-indigo-700"
             onClick={handleClick}
+            disabled={buttonText === 'Add Book' && !isAdmin}
           >
             <Plus className="mr-2 size-4" />
             {buttonText}

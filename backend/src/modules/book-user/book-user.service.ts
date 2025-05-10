@@ -14,7 +14,7 @@ export class BookUserService {
     private userService: UserService,
   ) {}
 
-  async create(isbn: string, userId: number): Promise<BookUser> {
+  async create(isbn: string, userId: string): Promise<BookUser> {
     await this.bookService.exists(isbn);
     await this.userService.exists(userId);
 
@@ -35,11 +35,11 @@ export class BookUserService {
     });
   }
 
-  async findAllPerUser(userId: number): Promise<BookUser[]> {
+  async findAllPerUser(userId: string): Promise<BookUser[]> {
     return this.bookUserRepository.find({ where: { userId } });
   }
 
-  async toggleStatus(isbn: string, userId: number): Promise<BookUser | null> {
+  async toggleStatus(isbn: string, userId: string): Promise<BookUser | null> {
     const bookUser = await this.bookUserRepository.findOne({
       where: { isbn, userId },
     });
@@ -64,7 +64,7 @@ export class BookUserService {
     });
   }
 
-  async delete(isbn: string, userId: number): Promise<void> {
+  async delete(isbn: string, userId: string): Promise<void> {
     const bookUser = await this.bookUserRepository.findOne({
       where: { isbn, userId },
     });

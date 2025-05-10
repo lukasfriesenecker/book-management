@@ -172,7 +172,7 @@ export default function ReviewDialog({ book }: { book: Book }) {
                       ? { ...prev, rating: star }
                       : {
                           isbn: book.isbn,
-                          userId: user?.id || 0,
+                          userId: user?.id || '',
                           rating: star,
                           comment: '',
                           username: user?.username || '',
@@ -192,7 +192,7 @@ export default function ReviewDialog({ book }: { book: Book }) {
                   ? { ...prev, comment: e.target.value }
                   : {
                       isbn: book.isbn,
-                      userId: user?.id || 0,
+                      userId: user?.id || '',
                       rating: 0,
                       comment: e.target.value,
                       username: user?.username || '',
